@@ -6,6 +6,7 @@ using UnityEngine;
 public class Level : ScriptableObject
 {
     public int index;
+    public Vector3 dimension = new Vector3(6,6);
     public List<SavedTile> tiles;
     
     public int[,] data;

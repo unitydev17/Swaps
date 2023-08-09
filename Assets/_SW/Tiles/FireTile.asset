@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09e84a42bf0a4bffb187a2f6cd35ba66, type: 3}
   m_Name: FireTile
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 1406095061, guid: 4dfae39ff0e4c47b2a125d0e9455ec26, type: 3}
+  m_Sprite: {fileID: 21300000, guid: a2652a26007584a9cb65628d6696e5b1, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1
