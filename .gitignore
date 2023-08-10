@@ -5,3 +5,17 @@ Assembly-CSharp.csproj
 EasyButtons.csproj
 EasyButtons.Editor.csproj
 Swaps.sln
+Assembly-CSharp-Editor-firstpass.csproj
+Assembly-CSharp-firstpass.csproj
+Async.Tests.csproj
+Extenject-Addressable-Tests.csproj
+Extenject-Async.csproj
+Zenject-Editor.csproj
+Zenject-EditorTests.csproj
+Zenject-IntegrationTests-Editor.csproj
+Zenject-IntegrationTests.csproj
+Zenject-PoolMonitor-Editor.csproj
+Zenject-ReflectionBaking-Editor.csproj
+Zenject-TestFramework.csproj
+Zenject-UnitTests-Editor.csproj
+Zenject.csproj

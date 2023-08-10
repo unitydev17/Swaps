@@ -36,6 +36,7 @@ public class LevelEditor : MonoBehaviour
         var level = ScriptableObject.CreateInstance<Level>();
         level.index = _levelIndex;
         level.tiles = GetTilesFromMap(_tileMap).ToList();
+        level.width = _tileMap.cellBounds.size.x;
 
         RepositoryUtils.Save(level);
     }
@@ -44,16 +45,24 @@ public class LevelEditor : MonoBehaviour
     {
         foreach (var pos in map.cellBounds.allPositionsWithin)
         {
-            if (map.GetTile(pos))
+            if (map.GetTile(pos) == null) continue;
+
+            var levelTile = map.GetTile<LevelTile>(pos);
+            var cellBounds = map.cellBounds;
+
+            yield return new SavedTile
             {
-                var levelTile = map.GetTile<LevelTile>(pos);
-                yield return new SavedTile
-                {
-                    position = pos,
-                    tile = levelTile
-                };
-            }
+                position = AlignPos(pos, cellBounds),
+                tile = levelTile,
+            };
         }
+    }
+
+    private static Vector3Int AlignPos(Vector3Int pos, BoundsInt bounds)
+    {
+        pos.x += bounds.size.x / 2;
+        pos.y += bounds.size.y / 2;
+        return pos;
     }
 
     private int[,] ReadTiles()

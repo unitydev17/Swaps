@@ -6,10 +6,8 @@ using UnityEngine;
 public class Level : ScriptableObject
 {
     public int index;
-    public Vector3 dimension = new Vector3(6,6);
+    public int width;
     public List<SavedTile> tiles;
-    
-    public int[,] data;
 
     public string assetName => GetLevelName(index);
     public static string GetLevelName(int i) => $"Level_{i}.asset";
