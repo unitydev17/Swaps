@@ -19,3 +19,4 @@ Zenject-ReflectionBaking-Editor.csproj
 Zenject-TestFramework.csproj
 Zenject-UnitTests-Editor.csproj
 Zenject.csproj
+ShaderGraphSettings.asset
