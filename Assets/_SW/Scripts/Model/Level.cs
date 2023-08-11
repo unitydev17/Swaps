@@ -11,6 +11,7 @@ public class Level : ScriptableObject
 
     public string assetName => GetLevelName(index);
     public static string GetLevelName(int i) => $"Level_{i}.asset";
+    
 }
 
 [Serializable]

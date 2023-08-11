@@ -27,7 +27,9 @@ public class GameManager : MonoBehaviour
     private void NextLevel()
     {
         _level = _repo.Load(_currLevel);
-        _levelManager.SetLevel(_level, _root);
+        var board = LevelToBoardMapper.Map(_level);
+        
+        _levelManager.SetBoard(board, _root);
         _levelManager.Activate();
     }
 }

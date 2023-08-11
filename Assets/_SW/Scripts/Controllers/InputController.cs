@@ -1,5 +1,5 @@
-using System;
 using UnityEngine;
+using Zenject;
 
 public class InputController : MonoBehaviour
 {
@@ -7,6 +7,14 @@ public class InputController : MonoBehaviour
     private Vector3 _prevMousePos;
     private Item _selectedItem;
     private Camera _camera;
+
+    private SignalBus _signalBus;
+
+    [Inject]
+    public void Construct(SignalBus signalBus)
+    {
+        _signalBus = signalBus;
+    }
 
     private void Start()
     {
@@ -33,7 +41,6 @@ public class InputController : MonoBehaviour
         _tap = true;
         _prevMousePos = mousePosition;
         _selectedItem = hit.collider.GetComponent<Item>();
-        Debug.Log(_selectedItem);
     }
 
     private void CheckRelease(Vector3 mousePosition)
@@ -42,14 +49,18 @@ public class InputController : MonoBehaviour
         _tap = false;
 
         var delta = mousePosition - _prevMousePos;
+
+        var direction = Vector2Int.zero;
+
         if (Mathf.Abs(delta.x) > Mathf.Abs(delta.y))
         {
-            TryHorizontalMove(delta.x > 0);
+            direction.x = delta.x > 0 ? 1 : -1;
         }
-    }
+        else
+        {
+            direction.y = delta.y > 0 ? 1 : -1;
+        }
 
-    private void TryHorizontalMove(bool right)
-    {
-       
+        _signalBus.Fire(new MoveItemSignal(_selectedItem, direction));
     }
 }
