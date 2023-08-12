@@ -20,5 +20,7 @@ public class GameInstaller : MonoInstaller
         SignalBusInstaller.Install(Container);
         Container.DeclareSignal<MoveItemSignal>();
         Container.BindSignal<MoveItemSignal>().ToMethod<BoardManager>((boardManager, signal) => boardManager.ProcessMove(signal.item, signal.direction)).FromResolve();
+        Container.DeclareSignal<CheckBoardSignal>();
+        Container.BindSignal<CheckBoardSignal>().ToMethod<BoardManager>((boardManager, signal) => boardManager.CheckBoard()).FromResolve();
     }
 }

@@ -20,4 +20,11 @@ public class Item : MonoBehaviour
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
     }
+
+    public void SetSortingOrder(int value)
+    {
+        _spriteRenderer.sortingOrder = value;
+    }
+
+    public int sortingOrder => _spriteRenderer.sortingOrder;
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using Zenject;
 
@@ -70,17 +71,27 @@ public class BoardManager
     public void ProcessMove(Item item, Vector2Int direction)
     {
         if (_boardViewModel.inputDenied) return;
-        
+
         var currIndex = item.index;
         var nextPos = _board.GetPos(currIndex) + direction;
+        var nextIndex = _board.GetIndex(nextPos);
 
         if (!CheckBounds(nextPos)) return;
 
         if (CheckEmpty(nextPos))
         {
-            var nextIndex = _board.GetIndex(nextPos);
+            if (IsMoveUp(direction)) return;
+
             _board.Move(currIndex, nextIndex);
+            return;
         }
+
+        _board.Swap(currIndex, nextIndex);
+    }
+
+    private static bool IsMoveUp(Vector2Int direction)
+    {
+        return direction.y > 0;
     }
 
     private bool CheckEmpty(Vector2Int nextPos)
@@ -88,15 +99,78 @@ public class BoardManager
         return _board.GetItemModel(nextPos) is EmptyModel;
     }
 
-    private bool CheckSameNeighbour(Item item, Vector2Int nextPos)
-    {
-        var neighbour = _board.GetItemModel(nextPos);
-        var current = _board.GetItemModel(item.index);
-        return current.GetType() == neighbour.GetType();
-    }
 
     private bool CheckBounds(Vector2 pos)
     {
         return pos.x >= 0 && pos.x < _board.width && pos.y >= 0 && pos.y < _board.height;
+    }
+
+    public async Task CheckBoard()
+    {
+        var moves = await NormalizeBoard();
+        
+        if (moves.Count > 0) _board.MoveBatch(moves);
+
+        // var flushes = FlushBoard();
+    }
+
+    // private Task<List<int>> FlushBoard()
+    // {
+    //     
+    //     
+    //     for (var i = 0; i < _board.items.Count; i++)
+    //     {
+    //         
+    //         // _board.items[i]
+    //         
+    //     }
+    // }
+
+    private async Task<List<(int, int)>> NormalizeBoard()
+    {
+        var moves = new List<(int, int)>();
+
+        var normBoard = new Board(_board);
+        bool hadMoves;
+
+        do
+        {
+            hadMoves = false;
+
+            for (var i = normBoard.width; i < normBoard.items.Count; i++)
+            {
+                var currPos = normBoard.GetPos(i);
+                if (normBoard.GetItemModel(currPos) is EmptyModel) continue;
+
+                var nextPos = currPos;
+                var targetPos = currPos;
+                var hasEmpties = false;
+
+                for (var y = currPos.y - 1; y >= 0; y--)
+                {
+                    nextPos.y = y;
+                    var nextItem = normBoard.GetItemModel(nextPos);
+
+                    if (nextItem is EmptyModel)
+                    {
+                        hasEmpties = true;
+                        targetPos = nextPos;
+                    }
+                    else break;
+                }
+
+                if (!hasEmpties) continue;
+
+                var targetIndex = normBoard.GetIndex(targetPos);
+                normBoard.MoveSilent(i, targetIndex);
+
+                hadMoves = true;
+                moves.Add((i, targetIndex));
+
+                await Task.Yield();
+            }
+        } while (hadMoves);
+
+        return moves;
     }
 }
