@@ -2,5 +2,5 @@ using UnityEngine;
 
 public class ItemModel
 {
-    public Vector2Int position;
+    // public Vector2Int position;
 }

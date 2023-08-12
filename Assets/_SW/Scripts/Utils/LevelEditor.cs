@@ -33,6 +33,8 @@ public class LevelEditor : MonoBehaviour
     [Button]
     private void SaveLevel()
     {
+        _tileMap.CompressBounds();
+        
         var level = ScriptableObject.CreateInstance<Level>();
         level.index = _levelIndex;
         level.tiles = GetTilesFromMap(_tileMap).ToList();

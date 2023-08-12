@@ -6,6 +6,7 @@ public class Configuration : ScriptableObjectInstaller<Configuration>
 {
     public GameObject[] itemPrefabs;
     public Vector2 offset;
+    public float moveTime;
 
     public override void InstallBindings()
     {

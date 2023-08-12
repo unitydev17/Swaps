@@ -4,17 +4,17 @@ using Zenject;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private Transform _root;
-    
+
     private Level _level;
     private int _currLevel = 1;
 
-    private LevelManager _levelManager;
+    private BoardManager _boardManager;
     private IRepository _repo;
 
     [Inject]
-    public void Construct(LevelManager levelManager, IRepository repo)
+    public void Construct(BoardManager boardManager, IRepository repo)
     {
-        _levelManager = levelManager;
+        _boardManager = boardManager;
         _repo = repo;
     }
 
@@ -23,13 +23,12 @@ public class GameManager : MonoBehaviour
         NextLevel();
     }
 
-
     private void NextLevel()
     {
         _level = _repo.Load(_currLevel);
         var board = LevelToBoardMapper.Map(_level);
-        
-        _levelManager.SetBoard(board, _root);
-        _levelManager.Activate();
+
+        _boardManager.SetBoard(board, _root);
+        _boardManager.Activate();
     }
 }

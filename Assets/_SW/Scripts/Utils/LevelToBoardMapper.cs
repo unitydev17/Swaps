@@ -14,13 +14,13 @@ public static class LevelToBoardMapper
 
             var model = type switch
             {
-                TileType.Empty => (ItemModel) new EmptyItemModel(),
+                TileType.Empty => (ItemModel) new EmptyModel(),
                 TileType.Fire => new FireModel(),
                 TileType.Water => new WaterItemModel(),
                 _ => throw new ArgumentOutOfRangeException()
             };
 
-            model.position = new Vector2Int(savedTile.position.x, savedTile.position.y);
+            //model.position = new Vector2Int(savedTile.position.x, savedTile.position.y);
             items.Add(model);
         }
 

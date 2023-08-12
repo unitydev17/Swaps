@@ -2,15 +2,22 @@ using UnityEngine;
 
 public class Item : MonoBehaviour
 {
-    public int index;
-    public int x;
-    public int y;
+    private int _index;
 
-    public void SetPos(int x, int y)
+    public int index
     {
-        this.x = x;
-        this.y = y;
+        get => _index;
+        set
+        {
+            _index = value;
+            _spriteRenderer.sortingOrder = _index;
+        }
     }
 
-    public Vector2Int position => new Vector2Int(x, y);
+    private SpriteRenderer _spriteRenderer;
+
+    private void Awake()
+    {
+        _spriteRenderer = GetComponent<SpriteRenderer>();
+    }
 }

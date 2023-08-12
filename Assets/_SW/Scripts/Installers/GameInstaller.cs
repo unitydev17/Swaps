@@ -7,7 +7,7 @@ public class GameInstaller : MonoInstaller
     public override void InstallBindings()
     {
         Container.BindFactory<BoardViewModel, BoardViewModel.Factory>().ToSelf().AsCached();
-        Container.Bind<LevelManager>().ToSelf().AsSingle();
+        Container.Bind<BoardManager>().ToSelf().AsSingle();
         Container.Bind<IRepository>().To<AssetStorage>().AsSingle();
         Container.BindMemoryPool<WaterItem, WaterItem.Pool>().FromComponentInNewPrefab(_cfg.itemPrefabs[0]);
         Container.BindMemoryPool<FireItem, FireItem.Pool>().FromComponentInNewPrefab(_cfg.itemPrefabs[1]);
@@ -19,6 +19,6 @@ public class GameInstaller : MonoInstaller
     {
         SignalBusInstaller.Install(Container);
         Container.DeclareSignal<MoveItemSignal>();
-        Container.BindSignal<MoveItemSignal>().ToMethod<LevelManager>((levelManager, signal) => levelManager.ProcessMove(signal.item, signal.direction)).FromResolve();
+        Container.BindSignal<MoveItemSignal>().ToMethod<BoardManager>((boardManager, signal) => boardManager.ProcessMove(signal.item, signal.direction)).FromResolve();
     }
 }
