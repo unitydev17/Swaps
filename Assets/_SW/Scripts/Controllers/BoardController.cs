@@ -153,7 +153,7 @@ public class BoardController
         _board.Flush(flushes);
         NotifyAnimateFlush?.Invoke(flushes);
 
-        await Task.Delay((int) (_cfg.moveTime * 1000));
+        await Task.Delay((int) (_cfg.flushTime * 1000));
     }
 
     private async Task ProcessNormalized(Moves moves)

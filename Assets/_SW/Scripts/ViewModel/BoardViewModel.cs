@@ -61,7 +61,8 @@ public class BoardViewModel : IDisposable
     {
         foreach (var item in _items.Where(item => flushes.Contains(item.index)))
         {
-            item.transform.DOScale(0, 0.5f).OnComplete(() =>
+            item.Flush();
+            DOVirtual.DelayedCall(_cfg.flushTime, () =>
             {
                 _items.Remove(item);
                 _itemPool.Despawn(item);

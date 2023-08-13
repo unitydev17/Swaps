@@ -15,10 +15,13 @@ public class Item : MonoBehaviour
     }
 
     private SpriteRenderer _spriteRenderer;
+    private Animator _animator;
+    private static readonly int FlushTrigger = Animator.StringToHash("Flush");
 
     private void Awake()
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
+        _animator = GetComponent<Animator>();
     }
 
     public void SetSortingOrder(int value)
@@ -37,5 +40,10 @@ public class Item : MonoBehaviour
     {
         gameObject.SetActive(true);
         transform.localScale = Vector3.one;
+    }
+
+    public void Flush()
+    {
+        _animator.SetTrigger(FlushTrigger);
     }
 }

@@ -21,3 +21,4 @@ MonoBehaviour:
   - {fileID: 6356604426572307213, guid: 29833e034cc14428090df98a8bb24393, type: 3}
   offset: {x: 2.7, y: 2.6}
   moveTime: 0.25
+  flushTime: 1

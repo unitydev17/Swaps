@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3094927042481233259}
   - component: {fileID: 9032755893318694838}
   - component: {fileID: 2156785843792064837}
+  - component: {fileID: 2405582758245796178}
   m_Layer: 0
   m_Name: FireSprite
   m_TagString: Untagged
@@ -143,5 +144,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af0a78fff0fb431d97bf6ce3ce7a6f9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  x: 0
-  y: 0
+--- !u!95 &2405582758245796178
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6356604426572307213}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 7ad50798b34a646838963a4574813e3c, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
