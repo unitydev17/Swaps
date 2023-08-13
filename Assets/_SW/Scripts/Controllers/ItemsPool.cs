@@ -16,7 +16,7 @@ public class ItemPool
     {
         return model switch
         {
-            WaterItemModel _ => (Item) _waterItemPool.Spawn(),
+            WaterModel _ => (Item) _waterItemPool.Spawn(),
             FireModel _ => _fireItemPool.Spawn(),
             _ => null
         };

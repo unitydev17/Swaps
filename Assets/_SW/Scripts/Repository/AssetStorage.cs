@@ -3,16 +3,20 @@ using UnityEditor;
 
 public class AssetStorage : IRepository
 {
+    private string _levelsPath = "Assets/Resources/levels/";
+
     public void Save(Level level)
     {
-        AssetDatabase.CreateAsset(level, $"Assets/Resources/levels/{level.assetName}");
+        var path = _levelsPath + level.assetName;
+        AssetDatabase.CreateAsset(level, path);
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
     }
 
     public Level Load(int index)
     {
-        var level =  AssetDatabase.LoadAssetAtPath<Level>($"Assets/Resources/levels/{Level.GetLevelName(index)}");
+        var path = _levelsPath + Level.GetLevelName(index);
+        var level = AssetDatabase.LoadAssetAtPath<Level>(path);
         if (level == null) throw new Exception($"Level {index} does not exists!");
         return level;
     }

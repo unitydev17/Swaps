@@ -108,7 +108,7 @@ public class BoardManager
     public async Task CheckBoard()
     {
         var moves = await NormalizeBoard();
-        
+
         if (moves.Count > 0) _board.MoveBatch(moves);
 
         // var flushes = FlushBoard();

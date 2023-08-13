@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 public static class LevelToBoardMapper
 {
@@ -16,14 +15,17 @@ public static class LevelToBoardMapper
             {
                 TileType.Empty => (ItemModel) new EmptyModel(),
                 TileType.Fire => new FireModel(),
-                TileType.Water => new WaterItemModel(),
+                TileType.Water => new WaterModel(),
                 _ => throw new ArgumentOutOfRangeException()
             };
 
-            //model.position = new Vector2Int(savedTile.position.x, savedTile.position.y);
             items.Add(model);
         }
 
-        return new Board {items = items, width = level.width};
+        return new Board
+        {
+            items = items, 
+            width = level.width
+        };
     }
 }

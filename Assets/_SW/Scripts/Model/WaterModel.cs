@@ -1,3 +1,3 @@
-public class WaterItemModel : ItemModel
+public class WaterModel : ItemModel
 {
 }

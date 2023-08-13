@@ -45,11 +45,6 @@ public class Board
         return GetItemModel(itemPosition.x, itemPosition.y);
     }
 
-    public ItemModel GetItemModel(int index)
-    {
-        return items[index];
-    }
-
     public void Move(int currentIndex, int nextIndex)
     {
         MoveSilent(currentIndex, nextIndex);
@@ -73,7 +68,7 @@ public class Board
         SwapModelItems(currentIndex, nextIndex);
         NotifySwap?.Invoke(currentIndex, nextIndex, GetPos(currentIndex), GetPos(nextIndex));
     }
-    
+
     public void MoveBatch(List<(int, int)> moves)
     {
         moves.ForEach(move => MoveSilent(move.Item1, move.Item2));

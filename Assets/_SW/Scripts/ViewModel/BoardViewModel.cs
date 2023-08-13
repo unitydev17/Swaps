@@ -14,6 +14,21 @@ public class BoardViewModel : IDisposable
     private Configuration _cfg;
     private SignalBus _signalBus;
 
+    private void Initialize()
+    {
+        Board.NotifyMove += OnMove;
+        Board.NotifySwap += OnSwap;
+        Board.NotifyMoveBatch += OnMoveBatch;
+    }
+
+    public void Dispose()
+    {
+        Board.NotifyMove -= OnMove;
+        Board.NotifySwap -= OnSwap;
+        Board.NotifyMoveBatch -= OnMoveBatch;
+    }
+
+
     private void DenyInput()
     {
         inputDenied = true;
@@ -35,9 +50,7 @@ public class BoardViewModel : IDisposable
     {
         _items = items;
         _board = board;
-        Board.NotifyMove += OnMove;
-        Board.NotifySwap += OnSwap;
-        Board.NotifyMoveBatch += OnMoveBatch;
+        Initialize();
     }
 
     private void OnSwap(int currIndex, int nextIndex, Vector2Int currPos, Vector2Int nextPos)
@@ -105,13 +118,6 @@ public class BoardViewModel : IDisposable
         item.DOKill(true);
         item.transform.DOLocalMove(newPos, _cfg.moveTime);
         DOVirtual.DelayedCall(_cfg.moveTime * 0.75f, () => { callback?.Invoke(); }, ignoreTimeScale: false);
-    }
-
-    public void Dispose()
-    {
-        Board.NotifyMove -= OnMove;
-        Board.NotifySwap -= OnSwap;
-        Board.NotifyMoveBatch -= OnMoveBatch;
     }
 
     public class Factory : PlaceholderFactory<BoardViewModel>
