@@ -5,6 +5,8 @@ using Zenject;
 
 public class BoardManager
 {
+    private readonly NormalizeWorker _normalizeWorker = new NormalizeWorker();
+
     private Board _board;
     private Transform _root;
     private Configuration _cfg;
@@ -105,72 +107,15 @@ public class BoardManager
         return pos.x >= 0 && pos.x < _board.width && pos.y >= 0 && pos.y < _board.height;
     }
 
+
     public async Task CheckBoard()
     {
-        var moves = await NormalizeBoard();
-
+        _normalizeWorker.SetBoard(_board);
+        var moves = await _normalizeWorker.Work();
         if (moves.Count > 0) _board.MoveBatch(moves);
 
+        Task.Yield();
+
         // var flushes = FlushBoard();
-    }
-
-    // private Task<List<int>> FlushBoard()
-    // {
-    //     
-    //     
-    //     for (var i = 0; i < _board.items.Count; i++)
-    //     {
-    //         
-    //         // _board.items[i]
-    //         
-    //     }
-    // }
-
-    private async Task<List<(int, int)>> NormalizeBoard()
-    {
-        var moves = new List<(int, int)>();
-
-        var normBoard = new Board(_board);
-        bool hadMoves;
-
-        do
-        {
-            hadMoves = false;
-
-            for (var i = normBoard.width; i < normBoard.items.Count; i++)
-            {
-                var currPos = normBoard.GetPos(i);
-                if (normBoard.GetItemModel(currPos) is EmptyModel) continue;
-
-                var nextPos = currPos;
-                var targetPos = currPos;
-                var hasEmpties = false;
-
-                for (var y = currPos.y - 1; y >= 0; y--)
-                {
-                    nextPos.y = y;
-                    var nextItem = normBoard.GetItemModel(nextPos);
-
-                    if (nextItem is EmptyModel)
-                    {
-                        hasEmpties = true;
-                        targetPos = nextPos;
-                    }
-                    else break;
-                }
-
-                if (!hasEmpties) continue;
-
-                var targetIndex = normBoard.GetIndex(targetPos);
-                normBoard.MoveSilent(i, targetIndex);
-
-                hadMoves = true;
-                moves.Add((i, targetIndex));
-
-                await Task.Yield();
-            }
-        } while (hadMoves);
-
-        return moves;
     }
 }
