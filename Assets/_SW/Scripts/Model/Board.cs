@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Board
@@ -74,5 +75,10 @@ public class Board
         {
             items[index] = new EmptyModel();
         }
+    }
+
+    public bool IsEmpty()
+    {
+        return !items.Any(ItemModel.IsNotEmpty);
     }
 }

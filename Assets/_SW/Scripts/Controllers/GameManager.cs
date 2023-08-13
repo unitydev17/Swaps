@@ -8,27 +8,39 @@ public class GameManager : MonoBehaviour
     private Level _level;
     private int _currLevel = 1;
 
-    private BoardManager _boardManager;
+    private BoardController _boardController;
     private IRepository _repo;
+    private Configuration _cfg;
 
     [Inject]
-    public void Construct(BoardManager boardManager, IRepository repo)
+    public void Construct(Configuration cfg, BoardController boardController, IRepository repo)
     {
-        _boardManager = boardManager;
+        _cfg = cfg;
+        _boardController = boardController;
         _repo = repo;
     }
+
 
     private void Start()
     {
         NextLevel();
     }
 
+    public void LevelCompleted()
+    {
+        _currLevel++;
+        NextLevel();
+    }
+
     private void NextLevel()
     {
-        _level = _repo.Load(_currLevel);
+        var levelIndex = _cfg.GetLevelIndex(_currLevel);
+        _level = _repo.Load(levelIndex);
         var board = LevelToBoardMapper.Map(_level);
 
-        _boardManager.SetBoard(board, _root);
-        _boardManager.Activate();
+        _boardController.SetBoard(board, _root);
+        _boardController.Activate();
     }
+
+   
 }

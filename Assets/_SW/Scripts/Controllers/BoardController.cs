@@ -4,13 +4,14 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Zenject;
 
-public class BoardManager
+public class BoardController
 {
     public static event Action<Flushes> NotifyAnimateFlush;
     public static event Action<Moves> NotifyAnimateMoveBatch;
     public static event Action<int, int, Vector2Int> NotifyAnimateMove;
     public static event Action<int, int, Vector2Int, Vector2Int> NotifyAnimateSwap;
 
+    private SignalBus _signalBus;
     private Board _board;
     private Transform _root;
     private Configuration _cfg;
@@ -20,10 +21,17 @@ public class BoardManager
     private NormalizeWorker _normalizeWorker;
     private FlushWorker _flushWorker;
 
+
     [Inject]
-    private void Construct(Configuration cfg, ItemPool itemPool, BoardViewModel.Factory boardViewModelFactory, NormalizeWorker normalizeWorker, FlushWorker flushWorker)
+    private void Construct(Configuration cfg,
+        SignalBus signalBus,
+        ItemPool itemPool,
+        BoardViewModel.Factory boardViewModelFactory,
+        NormalizeWorker normalizeWorker,
+        FlushWorker flushWorker)
     {
         _cfg = cfg;
+        _signalBus = signalBus;
         _itemPool = itemPool;
         _boardViewModelFactory = boardViewModelFactory;
         _normalizeWorker = normalizeWorker;
@@ -117,54 +125,57 @@ public class BoardManager
         return pos.x >= 0 && pos.x < _board.width && pos.y >= 0 && pos.y < _board.height;
     }
 
-    public async Task CheckBoard()
+    public async Task ValidateAndProcessBoard()
     {
         Moves moves;
         Flushes flushes;
 
         do
         {
-            moves = await GetNormalize();
+            moves = await FetchNormalized();
             await ProcessNormalized(moves);
 
-            flushes = await GetFlush();
+            flushes = await FetchFlush();
             await ProcessFlushes(flushes);
-            
-            
         } while (moves.Count > 0 || flushes.Count > 0);
+
+        if (_board.IsEmpty())
+        {
+            _boardViewModel.Dispose();
+            _signalBus.Fire<LevelCompletedSignal>();
+        }
     }
 
     private async Task ProcessFlushes(Flushes flushes)
     {
-        if (flushes.Count > 0)
-        {
-            _board.Flush(flushes);
-            NotifyAnimateFlush?.Invoke(flushes);
+        if (flushes.Count == 0) return;
 
-            await Task.Delay(1000);
-        }
+        _board.Flush(flushes);
+        NotifyAnimateFlush?.Invoke(flushes);
+
+        await Task.Delay((int) (_cfg.moveTime * 1000));
     }
 
     private async Task ProcessNormalized(Moves moves)
     {
-        if (moves.Count > 0)
-        {
-            _board.MoveBatch(moves);
-            NotifyAnimateMoveBatch?.Invoke(moves);
+        if (moves.Count == 0) return;
 
-            await Task.Delay((int) (_cfg.moveTime * 1000));
-        }
+        _board.MoveBatch(moves);
+        NotifyAnimateMoveBatch?.Invoke(moves);
+
+        await Task.Delay((int) (_cfg.moveTime * 1000));
     }
 
-    private async Task<Moves> GetNormalize()
+    private async Task<Moves> FetchNormalized()
     {
         _normalizeWorker.Setup(_board);
         return await _normalizeWorker.Work();
     }
 
-    private async Task<Flushes> GetFlush()
+    private async Task<Flushes> FetchFlush()
     {
         _flushWorker.Setup(_board);
         return await _flushWorker.Work();
     }
+
 }

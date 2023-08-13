@@ -35,6 +35,7 @@ public class Item : MonoBehaviour
 
     protected void Activate()
     {
+        gameObject.SetActive(true);
         transform.localScale = Vector3.one;
     }
 }

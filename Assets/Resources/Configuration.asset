@@ -12,6 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 253374b84d2614552876ed2602e696eb, type: 3}
   m_Name: Configuration
   m_EditorClassIdentifier: 
+  levels:
+  - {fileID: 11400000, guid: c4f9c2d5f679d4b6e98736c4a0ce4a3a, type: 2}
+  - {fileID: 11400000, guid: 084677e25c05d40c688b9d7686b7ff37, type: 2}
+  - {fileID: 11400000, guid: 771a319385f87460cb33c271ea4b898d, type: 2}
   itemPrefabs:
   - {fileID: 2091673849291195815, guid: cade2c62e3358438d9f157b792d04693, type: 3}
   - {fileID: 6356604426572307213, guid: 29833e034cc14428090df98a8bb24393, type: 3}

@@ -17,18 +17,18 @@ public class BoardViewModel : IDisposable
 
     private void Initialize()
     {
-        BoardManager.NotifyAnimateMove += OnMove;
-        BoardManager.NotifyAnimateSwap += OnSwap;
-        BoardManager.NotifyAnimateMoveBatch += OnNotifyAnimateMoveBatch;
-        BoardManager.NotifyAnimateFlush += OnFlush;
+        BoardController.NotifyAnimateMove += OnMove;
+        BoardController.NotifyAnimateSwap += OnSwap;
+        BoardController.NotifyAnimateMoveBatch += OnNotifyAnimateMoveBatch;
+        BoardController.NotifyAnimateFlush += OnFlush;
     }
 
     public void Dispose()
     {
-        BoardManager.NotifyAnimateMove -= OnMove;
-        BoardManager.NotifyAnimateSwap -= OnSwap;
-        BoardManager.NotifyAnimateMoveBatch -= OnNotifyAnimateMoveBatch;
-        BoardManager.NotifyAnimateFlush -= OnFlush;
+        BoardController.NotifyAnimateMove -= OnMove;
+        BoardController.NotifyAnimateSwap -= OnSwap;
+        BoardController.NotifyAnimateMoveBatch -= OnNotifyAnimateMoveBatch;
+        BoardController.NotifyAnimateFlush -= OnFlush;
     }
 
 
@@ -78,7 +78,7 @@ public class BoardViewModel : IDisposable
         AnimateMove(currItem, nextPos, () =>
         {
             currItem.index = nextIndex;
-            _signalBus.Fire<CheckBoardSignal>();
+            _signalBus.Fire<ValidateBoard>();
             AllowInput();
         });
 
@@ -93,7 +93,7 @@ public class BoardViewModel : IDisposable
         AnimateMove(item, newPos, () =>
         {
             item.index = nextIndex;
-            _signalBus.Fire<CheckBoardSignal>();
+            _signalBus.Fire<ValidateBoard>();
             AllowInput();
         });
     }
