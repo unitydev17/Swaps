@@ -1,13 +1,8 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Board
 {
-    public static event Action<List<(int, int)>> NotifyMoveBatch;
-    public static event Action<int, int, Vector2Int> NotifyMove;
-    public static event Action<int, int, Vector2Int, Vector2Int> NotifySwap;
-
     public Board()
     {
     }
@@ -23,14 +18,20 @@ public class Board
 
     public int height => items.Count / width;
 
-    private ItemModel GetItemModel(int x, int y)
+    public ItemModel GetItemModel(int x, int y)
     {
-        return items[width * y + x];
+        var index = GetIndex(x, y);
+        return items[index];
     }
 
     public int GetIndex(Vector2Int pos)
     {
         return width * pos.y + pos.x;
+    }
+
+    public int GetIndex(int x, int y)
+    {
+        return width * y + x;
     }
 
     public Vector2Int GetPos(int index)
@@ -47,12 +48,6 @@ public class Board
 
     public void Move(int currentIndex, int nextIndex)
     {
-        MoveSilent(currentIndex, nextIndex);
-        NotifyMove?.Invoke(currentIndex, nextIndex, GetPos(nextIndex));
-    }
-
-    public void MoveSilent(int currentIndex, int nextIndex)
-    {
         SwapModelItems(currentIndex, nextIndex);
     }
 
@@ -66,12 +61,18 @@ public class Board
     public void Swap(int currentIndex, int nextIndex)
     {
         SwapModelItems(currentIndex, nextIndex);
-        NotifySwap?.Invoke(currentIndex, nextIndex, GetPos(currentIndex), GetPos(nextIndex));
     }
 
     public void MoveBatch(List<(int, int)> moves)
     {
-        moves.ForEach(move => MoveSilent(move.Item1, move.Item2));
-        NotifyMoveBatch?.Invoke(moves);
+        moves.ForEach(move => Move(move.Item1, move.Item2));
+    }
+
+    public void Flush(Flushes flushes)
+    {
+        foreach (var index in flushes)
+        {
+            items[index] = new EmptyModel();
+        }
     }
 }

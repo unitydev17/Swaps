@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -5,7 +6,10 @@ using Zenject;
 
 public class BoardManager
 {
-    private readonly NormalizeWorker _normalizeWorker = new NormalizeWorker();
+    public static event Action<Flushes> NotifyAnimateFlush;
+    public static event Action<Moves> NotifyAnimateMoveBatch;
+    public static event Action<int, int, Vector2Int> NotifyAnimateMove;
+    public static event Action<int, int, Vector2Int, Vector2Int> NotifyAnimateSwap;
 
     private Board _board;
     private Transform _root;
@@ -13,13 +17,17 @@ public class BoardManager
     private ItemPool _itemPool;
     private BoardViewModel _boardViewModel;
     private BoardViewModel.Factory _boardViewModelFactory;
+    private NormalizeWorker _normalizeWorker;
+    private FlushWorker _flushWorker;
 
     [Inject]
-    private void Construct(Configuration cfg, ItemPool itemPool, BoardViewModel.Factory boardViewModelFactory)
+    private void Construct(Configuration cfg, ItemPool itemPool, BoardViewModel.Factory boardViewModelFactory, NormalizeWorker normalizeWorker, FlushWorker flushWorker)
     {
         _cfg = cfg;
         _itemPool = itemPool;
         _boardViewModelFactory = boardViewModelFactory;
+        _normalizeWorker = normalizeWorker;
+        _flushWorker = flushWorker;
     }
 
     public void SetBoard(Board board, Transform root)
@@ -85,10 +93,12 @@ public class BoardManager
             if (IsMoveUp(direction)) return;
 
             _board.Move(currIndex, nextIndex);
+            NotifyAnimateMove?.Invoke(currIndex, nextIndex, _board.GetPos(nextIndex));
             return;
         }
 
         _board.Swap(currIndex, nextIndex);
+        NotifyAnimateSwap?.Invoke(currIndex, nextIndex, _board.GetPos(currIndex), _board.GetPos(nextIndex));
     }
 
     private static bool IsMoveUp(Vector2Int direction)
@@ -107,15 +117,54 @@ public class BoardManager
         return pos.x >= 0 && pos.x < _board.width && pos.y >= 0 && pos.y < _board.height;
     }
 
-
     public async Task CheckBoard()
     {
-        _normalizeWorker.SetBoard(_board);
-        var moves = await _normalizeWorker.Work();
-        if (moves.Count > 0) _board.MoveBatch(moves);
+        Moves moves;
+        Flushes flushes;
 
-        Task.Yield();
+        do
+        {
+            moves = await GetNormalize();
+            await ProcessNormalized(moves);
 
-        // var flushes = FlushBoard();
+            flushes = await GetFlush();
+            await ProcessFlushes(flushes);
+            
+            
+        } while (moves.Count > 0 || flushes.Count > 0);
+    }
+
+    private async Task ProcessFlushes(Flushes flushes)
+    {
+        if (flushes.Count > 0)
+        {
+            _board.Flush(flushes);
+            NotifyAnimateFlush?.Invoke(flushes);
+
+            await Task.Delay(1000);
+        }
+    }
+
+    private async Task ProcessNormalized(Moves moves)
+    {
+        if (moves.Count > 0)
+        {
+            _board.MoveBatch(moves);
+            NotifyAnimateMoveBatch?.Invoke(moves);
+
+            await Task.Delay((int) (_cfg.moveTime * 1000));
+        }
+    }
+
+    private async Task<Moves> GetNormalize()
+    {
+        _normalizeWorker.Setup(_board);
+        return await _normalizeWorker.Work();
+    }
+
+    private async Task<Flushes> GetFlush()
+    {
+        _flushWorker.Setup(_board);
+        return await _flushWorker.Work();
     }
 }

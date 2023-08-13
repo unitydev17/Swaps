@@ -27,4 +27,14 @@ public class Item : MonoBehaviour
     }
 
     public int sortingOrder => _spriteRenderer.sortingOrder;
+
+    protected void Deactivate()
+    {
+        gameObject.SetActive(false);
+    }
+
+    protected void Activate()
+    {
+        transform.localScale = Vector3.one;
+    }
 }

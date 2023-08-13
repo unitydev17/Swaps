@@ -13,21 +13,39 @@ public class BoardViewModel : IDisposable
     private Board _board;
     private Configuration _cfg;
     private SignalBus _signalBus;
+    private ItemPool _itemPool;
 
     private void Initialize()
     {
-        Board.NotifyMove += OnMove;
-        Board.NotifySwap += OnSwap;
-        Board.NotifyMoveBatch += OnMoveBatch;
+        BoardManager.NotifyAnimateMove += OnMove;
+        BoardManager.NotifyAnimateSwap += OnSwap;
+        BoardManager.NotifyAnimateMoveBatch += OnNotifyAnimateMoveBatch;
+        BoardManager.NotifyAnimateFlush += OnFlush;
     }
 
     public void Dispose()
     {
-        Board.NotifyMove -= OnMove;
-        Board.NotifySwap -= OnSwap;
-        Board.NotifyMoveBatch -= OnMoveBatch;
+        BoardManager.NotifyAnimateMove -= OnMove;
+        BoardManager.NotifyAnimateSwap -= OnSwap;
+        BoardManager.NotifyAnimateMoveBatch -= OnNotifyAnimateMoveBatch;
+        BoardManager.NotifyAnimateFlush -= OnFlush;
     }
 
+
+    [Inject]
+    private void Construct(Configuration cfg, SignalBus signalBus, ItemPool itemPool)
+    {
+        _cfg = cfg;
+        _signalBus = signalBus;
+        _itemPool = itemPool;
+    }
+
+    public void Init(List<Item> items, Board board)
+    {
+        _items = items;
+        _board = board;
+        Initialize();
+    }
 
     private void DenyInput()
     {
@@ -39,18 +57,16 @@ public class BoardViewModel : IDisposable
         inputDenied = false;
     }
 
-    [Inject]
-    private void Construct(Configuration cfg, SignalBus signalBus)
+    private void OnFlush(Flushes flushes)
     {
-        _cfg = cfg;
-        _signalBus = signalBus;
-    }
-
-    public void Init(List<Item> items, Board board)
-    {
-        _items = items;
-        _board = board;
-        Initialize();
+        foreach (var item in _items.Where(item => flushes.Contains(item.index)))
+        {
+            item.transform.DOScale(0, 0.5f).OnComplete(() =>
+            {
+                _items.Remove(item);
+                _itemPool.Despawn(item);
+            });
+        }
     }
 
     private void OnSwap(int currIndex, int nextIndex, Vector2Int currPos, Vector2Int nextPos)
@@ -82,7 +98,7 @@ public class BoardViewModel : IDisposable
         });
     }
 
-    private void OnMoveBatch(List<(int, int)> moves)
+    private void OnNotifyAnimateMoveBatch(Moves moves)
     {
         DenyInput();
 
@@ -100,7 +116,6 @@ public class BoardViewModel : IDisposable
             {
                 item.index = nextIndex;
                 if (leftMoves != 0) return;
-                _signalBus.Fire<CheckBoardSignal>();
                 AllowInput();
             });
         });
@@ -119,6 +134,7 @@ public class BoardViewModel : IDisposable
         item.transform.DOLocalMove(newPos, _cfg.moveTime);
         DOVirtual.DelayedCall(_cfg.moveTime * 0.75f, () => { callback?.Invoke(); }, ignoreTimeScale: false);
     }
+
 
     public class Factory : PlaceholderFactory<BoardViewModel>
     {

@@ -12,6 +12,9 @@ public class GameInstaller : MonoInstaller
         Container.BindMemoryPool<WaterItem, WaterItem.Pool>().FromComponentInNewPrefab(_cfg.itemPrefabs[0]);
         Container.BindMemoryPool<FireItem, FireItem.Pool>().FromComponentInNewPrefab(_cfg.itemPrefabs[1]);
         Container.Bind<ItemPool>().ToSelf().AsSingle();
+        Container.Bind<NormalizeWorker>().ToSelf().AsSingle();
+        Container.Bind<FlushWorker>().ToSelf().AsSingle();
+
         BindSignals();
     }
 

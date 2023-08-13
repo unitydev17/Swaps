@@ -21,4 +21,10 @@ public class ItemPool
             _ => null
         };
     }
+
+    public void Despawn(Item item)
+    {
+        if (item is WaterItem waterItem) _waterItemPool.Despawn(waterItem);
+        if (item is FireItem fireItem) _fireItemPool.Despawn(fireItem);
+    }
 }

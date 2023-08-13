@@ -2,28 +2,27 @@ using System.Threading.Tasks;
 
 public class NormalizeWorker : IWorker<Moves>
 {
-    private Board _board;
+    private Board _normBoard;
 
-    public void SetBoard(Board board)
+    public void Setup(Board board)
     {
-        _board = board;
+        _normBoard = new Board(board);
     }
 
     public async Task<Moves> Work()
     {
         var moves = new Moves();
 
-        var normBoard = new Board(_board);
         bool hadMoves;
 
         do
         {
             hadMoves = false;
 
-            for (var i = normBoard.width; i < normBoard.items.Count; i++)
+            for (var i = _normBoard.width; i < _normBoard.items.Count; i++)
             {
-                var currPos = normBoard.GetPos(i);
-                if (normBoard.GetItemModel(currPos) is EmptyModel) continue;
+                var currPos = _normBoard.GetPos(i);
+                if (_normBoard.GetItemModel(currPos) is EmptyModel) continue;
 
                 var nextPos = currPos;
                 var targetPos = currPos;
@@ -32,7 +31,7 @@ public class NormalizeWorker : IWorker<Moves>
                 for (var y = currPos.y - 1; y >= 0; y--)
                 {
                     nextPos.y = y;
-                    var nextItem = normBoard.GetItemModel(nextPos);
+                    var nextItem = _normBoard.GetItemModel(nextPos);
 
                     if (nextItem is EmptyModel)
                     {
@@ -44,8 +43,8 @@ public class NormalizeWorker : IWorker<Moves>
 
                 if (!hasEmpties) continue;
 
-                var targetIndex = normBoard.GetIndex(targetPos);
-                normBoard.MoveSilent(i, targetIndex);
+                var targetIndex = _normBoard.GetIndex(targetPos);
+                _normBoard.Move(i, targetIndex);
 
                 hadMoves = true;
                 moves.Add((i, targetIndex));
