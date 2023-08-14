@@ -14,6 +14,7 @@ public class Item : MonoBehaviour
         }
     }
 
+    private Transform _tr;
     private SpriteRenderer _spriteRenderer;
     private Animator _animator;
     private static readonly int FlushTrigger = Animator.StringToHash("Flush");
@@ -22,14 +23,8 @@ public class Item : MonoBehaviour
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _animator = GetComponent<Animator>();
+        _tr = transform;
     }
-
-    public void SetSortingOrder(int value)
-    {
-        _spriteRenderer.sortingOrder = value;
-    }
-
-    public int sortingOrder => _spriteRenderer.sortingOrder;
 
     protected void Deactivate()
     {
@@ -39,7 +34,6 @@ public class Item : MonoBehaviour
     protected void Activate()
     {
         gameObject.SetActive(true);
-        transform.localScale = Vector3.one;
     }
 
     public void Flush()

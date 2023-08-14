@@ -1,4 +1,6 @@
+using System;
 using System.Threading.Tasks;
+using UnityEngine;
 
 public class NormalizeWorker : IWorker<Moves>
 {
@@ -12,46 +14,52 @@ public class NormalizeWorker : IWorker<Moves>
     public async Task<Moves> Work()
     {
         var moves = new Moves();
-
-        bool hadMoves;
-
-        do
+        try
         {
-            hadMoves = false;
+            bool hadMoves;
 
-            for (var i = _normBoard.width; i < _normBoard.items.Count; i++)
+            do
             {
-                var currPos = _normBoard.GetPos(i);
-                if (_normBoard.GetItemModel(currPos) is EmptyModel) continue;
+                hadMoves = false;
 
-                var nextPos = currPos;
-                var targetPos = currPos;
-                var hasEmpties = false;
-
-                for (var y = currPos.y - 1; y >= 0; y--)
+                for (var i = _normBoard.width; i < _normBoard.items.Count; i++)
                 {
-                    nextPos.y = y;
-                    var nextItem = _normBoard.GetItemModel(nextPos);
+                    var currPos = _normBoard.GetPos(i);
+                    if (_normBoard.GetItemModel(currPos) is EmptyModel) continue;
 
-                    if (nextItem is EmptyModel)
+                    var nextPos = currPos;
+                    var targetPos = currPos;
+                    var hasEmpties = false;
+
+                    for (var y = currPos.y - 1; y >= 0; y--)
                     {
-                        hasEmpties = true;
-                        targetPos = nextPos;
+                        nextPos.y = y;
+                        var nextItem = _normBoard.GetItemModel(nextPos);
+
+                        if (nextItem is EmptyModel)
+                        {
+                            hasEmpties = true;
+                            targetPos = nextPos;
+                        }
+                        else break;
                     }
-                    else break;
+
+                    if (!hasEmpties) continue;
+
+                    var targetIndex = _normBoard.GetIndex(targetPos);
+                    _normBoard.Move(i, targetIndex);
+
+                    hadMoves = true;
+                    moves.Add((i, targetIndex));
+
+                    await Task.Yield();
                 }
-
-                if (!hasEmpties) continue;
-
-                var targetIndex = _normBoard.GetIndex(targetPos);
-                _normBoard.Move(i, targetIndex);
-
-                hadMoves = true;
-                moves.Add((i, targetIndex));
-
-                await Task.Yield();
-            }
-        } while (hadMoves);
+            } while (hadMoves);
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e.Message);
+        }
 
         return moves;
     }

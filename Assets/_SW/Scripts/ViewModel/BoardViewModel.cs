@@ -37,7 +37,7 @@ public class BoardViewModel
             {
                 _items.Remove(item);
                 _itemPool.Despawn(item);
-            });
+            }, false);
         }
     }
 

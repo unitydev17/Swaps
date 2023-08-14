@@ -12,6 +12,16 @@ public class Configuration : ScriptableObjectInstaller<Configuration>
     public Vector2 offset;
     public float moveTime;
     public float flushTime;
+    
+    [Header("Balloon")]
+    public GameObject[] balloonPrefabs;
+    public Vector2 heightRange;
+    public Vector2 amplitudeRange;
+    public Vector2 periodRange;
+    public Vector2 speedRange;
+    public Vector2 scaleRange;
+    public int maxBalloons;
+    public Vector2 repeatPeriod;
 
     public override void InstallBindings()
     {

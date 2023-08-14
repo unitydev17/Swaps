@@ -50,6 +50,7 @@ public class BoardController
 
     private void CreateBoard()
     {
+        ResetRootScale();
         AlignPivot();
 
         var items = CreateItemsFromModel();
@@ -59,13 +60,18 @@ public class BoardController
         CorrectRootScale();
     }
 
+    private void ResetRootScale()
+    {
+        _pivot.parent.localScale = Vector3.one;
+    }
+
     private void AlignPivot()
     {
         var pivotOffsetX = (_board.width - 1) * _cfg.offset.x * 0.5f;
         _pivot.localPosition = Vector3.left * pivotOffsetX;
     }
 
-    public void CorrectRootScale()
+    private void CorrectRootScale()
     {
         _pivot.parent.localScale = Vector3.one * _cfg.scaleCurve.Evaluate(_board.width / 10f);
     }
@@ -162,10 +168,7 @@ public class BoardController
             await ProcessFlushes(flushes);
         } while (moves.Count > 0 || flushes.Count > 0);
 
-        if (_board.IsEmpty())
-        {
-            _signalBus.Fire<LevelCompletedSignal>();
-        }
+        if (_board.IsEmpty()) _signalBus.Fire<LevelCompletedSignal>();
 
         _appModel.inputDenied = false;
     }

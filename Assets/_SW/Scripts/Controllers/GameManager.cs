@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
     private Level _level;
     private UserData _userData;
 
+    private BalloonManager _balloonManager;
     private BoardController _boardController;
     private IRepository _levelStorage;
     private Configuration _cfg;
@@ -15,13 +16,20 @@ public class GameManager : MonoBehaviour
     private UiController _ui;
 
     [Inject]
-    public void Construct(Configuration cfg, BoardController boardController, IRepository levelStorage, IUserRepository userDataStorage, UiController ui)
+    public void Construct(
+        Configuration cfg,
+        BoardController boardController,
+        IRepository levelStorage,
+        IUserRepository userDataStorage,
+        UiController ui,
+        BalloonManager balloonManager)
     {
         _cfg = cfg;
         _boardController = boardController;
         _levelStorage = levelStorage;
         _userDataStorage = userDataStorage;
         _ui = ui;
+        _balloonManager = balloonManager;
     }
 
     private void Awake()
@@ -34,6 +42,10 @@ public class GameManager : MonoBehaviour
     {
         _userData = _userDataStorage.Load();
         NextLevel();
+
+
+        // _balloonManager.Setup(Camera.main);
+        // _balloonManager.Activate();
     }
 
     public void ForceNextLevel()
@@ -45,7 +57,7 @@ public class GameManager : MonoBehaviour
     public void LevelCompleted()
     {
         _userData.currentLevel++;
-        
+
         _ui.FadeUnfade();
         NextLevel();
     }
@@ -66,10 +78,5 @@ public class GameManager : MonoBehaviour
         {
             _userDataStorage.Save(_userData);
         }
-    }
-
-    private void Update()
-    {
-        _boardController?.CorrectRootScale();
     }
 }

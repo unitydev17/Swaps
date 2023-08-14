@@ -24,7 +24,7 @@ public class FlushWorker : IWorker<Flushes>
         }
         catch (Exception e)
         {
-            Debug.Log(e);
+            Debug.Log(e.Message);
         }
 
         return flushes;
