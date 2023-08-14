@@ -1,13 +1,15 @@
 using System;
 using UnityEditor;
 
-public class AssetStorage : IRepository
+public class LevelStorage : IRepository
 {
-    private string _levelsPath = "Assets/Resources/levels/";
+    private const string LevelsPath = "Assets/Resources/levels/";
 
     public void Save(Level level)
     {
-        var path = _levelsPath + level.assetName;
+        if (level == null) return;
+
+        var path = LevelsPath + level.assetName;
         AssetDatabase.CreateAsset(level, path);
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
@@ -15,7 +17,7 @@ public class AssetStorage : IRepository
 
     public Level Load(int index)
     {
-        var path = _levelsPath + Level.GetLevelName(index);
+        var path = LevelsPath + Level.GetLevelName(index);
         var level = AssetDatabase.LoadAssetAtPath<Level>(path);
         if (level == null) throw new Exception($"Level {index} does not exists!");
         return level;

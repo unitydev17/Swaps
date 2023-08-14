@@ -7,16 +7,28 @@ public class GameInstaller : MonoInstaller
     public override void InstallBindings()
     {
         Container.BindFactory<BoardViewModel, BoardViewModel.Factory>().ToSelf().AsCached();
-        Container.Bind<BoardController>().ToSelf().AsSingle();
-        Container.Bind<IRepository>().To<AssetStorage>().AsSingle();
-        Container.BindMemoryPool<WaterItem, WaterItem.Pool>().FromComponentInNewPrefab(_cfg.itemPrefabs[0]);
-        Container.BindMemoryPool<FireItem, FireItem.Pool>().FromComponentInNewPrefab(_cfg.itemPrefabs[1]);
+
         Container.Bind<ItemPool>().ToSelf().AsSingle();
         Container.Bind<NormalizeWorker>().ToSelf().AsSingle();
         Container.Bind<FlushWorker>().ToSelf().AsSingle();
         Container.Bind<GameManager>().FromComponentInHierarchy().AsSingle();
 
+        BindRepositories();
         BindSignals();
+        BindPools();
+    }
+
+    private void BindPools()
+    {
+        Container.Bind<BoardController>().ToSelf().AsSingle();
+        Container.BindMemoryPool<WaterItem, WaterItem.Pool>().FromComponentInNewPrefab(_cfg.itemPrefabs[0]);
+        Container.BindMemoryPool<FireItem, FireItem.Pool>().FromComponentInNewPrefab(_cfg.itemPrefabs[1]);
+    }
+
+    private void BindRepositories()
+    {
+        Container.Bind<IRepository>().To<LevelStorage>().AsSingle();
+        Container.Bind<IUserRepository>().To<UserDataStorage>().AsSingle();
     }
 
     private void BindSignals()
