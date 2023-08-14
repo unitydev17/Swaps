@@ -5,31 +5,13 @@ using DG.Tweening;
 using UnityEngine;
 using Zenject;
 
-public class BoardViewModel : IDisposable
+public class BoardViewModel
 {
-    public bool inputDenied;
-
     private List<Item> _items;
     private Board _board;
     private Configuration _cfg;
     private SignalBus _signalBus;
     private ItemPool _itemPool;
-
-    private void Initialize()
-    {
-        BoardController.NotifyAnimateMove += OnMove;
-        BoardController.NotifyAnimateSwap += OnSwap;
-        BoardController.NotifyAnimateMoveBatch += OnNotifyAnimateMoveBatch;
-        BoardController.NotifyAnimateFlush += OnFlush;
-    }
-
-    public void Dispose()
-    {
-        BoardController.NotifyAnimateMove -= OnMove;
-        BoardController.NotifyAnimateSwap -= OnSwap;
-        BoardController.NotifyAnimateMoveBatch -= OnNotifyAnimateMoveBatch;
-        BoardController.NotifyAnimateFlush -= OnFlush;
-    }
 
 
     [Inject]
@@ -44,20 +26,9 @@ public class BoardViewModel : IDisposable
     {
         _items = items;
         _board = board;
-        Initialize();
     }
 
-    private void DenyInput()
-    {
-        inputDenied = true;
-    }
-
-    private void AllowInput()
-    {
-        inputDenied = false;
-    }
-
-    private void OnFlush(Flushes flushes)
+    public void AnimateFlush(Flushes flushes)
     {
         foreach (var item in _items.Where(item => flushes.Contains(item.index)))
         {
@@ -70,55 +41,40 @@ public class BoardViewModel : IDisposable
         }
     }
 
-    private void OnSwap(int currIndex, int nextIndex, Vector2Int currPos, Vector2Int nextPos)
+    public void AnimateSwap(int currIndex, int nextIndex, Vector2Int currPos, Vector2Int nextPos)
     {
         var currItem = GetItem(currIndex);
         var nextItem = GetItem(nextIndex);
 
-        DenyInput();
         AnimateMove(currItem, nextPos, () =>
         {
             currItem.index = nextIndex;
             _signalBus.Fire<ValidateBoard>();
-            AllowInput();
         });
 
         AnimateMove(nextItem, currPos, () => { nextItem.index = currIndex; });
     }
 
-    private void OnMove(int index, int nextIndex, Vector2Int newPos)
+    public void AnimateMove(int index, int nextIndex, Vector2Int newPos)
     {
         var item = GetItem(index);
 
-        DenyInput();
         AnimateMove(item, newPos, () =>
         {
             item.index = nextIndex;
             _signalBus.Fire<ValidateBoard>();
-            AllowInput();
         });
     }
 
-    private void OnNotifyAnimateMoveBatch(Moves moves)
+    public void AnimateMoveBatch(Moves moves)
     {
-        DenyInput();
-
-        var leftMoves = moves.Count;
-
         moves.ForEach(move =>
         {
             var (currIndex, nextIndex) = move;
             var item = GetItem(currIndex);
             var newPos = _board.GetPos(nextIndex);
 
-            leftMoves--;
-
-            AnimateMove(item, newPos, () =>
-            {
-                item.index = nextIndex;
-                if (leftMoves != 0) return;
-                AllowInput();
-            });
+            AnimateMove(item, newPos, () => { item.index = nextIndex; });
         });
     }
 
@@ -139,5 +95,13 @@ public class BoardViewModel : IDisposable
 
     public class Factory : PlaceholderFactory<BoardViewModel>
     {
+    }
+
+    public void Clear()
+    {
+        foreach (var item in _items)
+        {
+            _itemPool.Despawn(item);
+        }
     }
 }

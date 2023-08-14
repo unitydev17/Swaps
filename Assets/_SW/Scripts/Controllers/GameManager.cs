@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using Zenject;
 
@@ -13,14 +12,16 @@ public class GameManager : MonoBehaviour
     private IRepository _levelStorage;
     private Configuration _cfg;
     private IUserRepository _userDataStorage;
+    private UiController _ui;
 
     [Inject]
-    public void Construct(Configuration cfg, BoardController boardController, IRepository levelStorage, IUserRepository userDataStorage)
+    public void Construct(Configuration cfg, BoardController boardController, IRepository levelStorage, IUserRepository userDataStorage, UiController ui)
     {
         _cfg = cfg;
         _boardController = boardController;
         _levelStorage = levelStorage;
         _userDataStorage = userDataStorage;
+        _ui = ui;
     }
 
     private void Awake()
@@ -35,9 +36,17 @@ public class GameManager : MonoBehaviour
         NextLevel();
     }
 
+    public void ForceNextLevel()
+    {
+        _boardController.Clear();
+        LevelCompleted();
+    }
+
     public void LevelCompleted()
     {
         _userData.currentLevel++;
+        
+        _ui.FadeUnfade();
         NextLevel();
     }
 

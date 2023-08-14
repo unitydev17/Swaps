@@ -1,36 +1,34 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
 using Zenject;
 
 public class BoardController
 {
-    public static event Action<Flushes> NotifyAnimateFlush;
-    public static event Action<Moves> NotifyAnimateMoveBatch;
-    public static event Action<int, int, Vector2Int> NotifyAnimateMove;
-    public static event Action<int, int, Vector2Int, Vector2Int> NotifyAnimateSwap;
-
-    private SignalBus _signalBus;
+    private BoardViewModel _boardViewModel;
     private Board _board;
     private Transform _pivot;
+
+    private SignalBus _signalBus;
     private Configuration _cfg;
     private ItemPool _itemPool;
-    private BoardViewModel _boardViewModel;
     private BoardViewModel.Factory _boardViewModelFactory;
     private NormalizeWorker _normalizeWorker;
     private FlushWorker _flushWorker;
+    private AppModel _appModel;
 
 
     [Inject]
-    private void Construct(Configuration cfg,
+    private void Construct(
+        AppModel appModel,
+        Configuration cfg,
         SignalBus signalBus,
         ItemPool itemPool,
         BoardViewModel.Factory boardViewModelFactory,
         NormalizeWorker normalizeWorker,
         FlushWorker flushWorker)
     {
+        _appModel = appModel;
         _cfg = cfg;
         _signalBus = signalBus;
         _itemPool = itemPool;
@@ -57,14 +55,14 @@ public class BoardController
         var items = CreateItemsFromModel();
         _boardViewModel = _boardViewModelFactory.Create();
         _boardViewModel.Init(items, _board);
-        
+
         CorrectRootScale();
     }
 
     private void AlignPivot()
     {
         var pivotOffsetX = (_board.width - 1) * _cfg.offset.x * 0.5f;
-        _pivot.localPosition += Vector3.left * pivotOffsetX;
+        _pivot.localPosition = Vector3.left * pivotOffsetX;
     }
 
     public void CorrectRootScale()
@@ -104,25 +102,34 @@ public class BoardController
 
     public void ProcessMove(Item item, Vector2Int direction)
     {
-        if (_boardViewModel.inputDenied) return;
+        if (_appModel.inputDenied) return;
+        _appModel.inputDenied = true;
 
         var currIndex = item.index;
         var nextPos = _board.GetPos(currIndex) + direction;
         var nextIndex = _board.GetIndex(nextPos);
 
-        if (!CheckBounds(nextPos)) return;
+        if (!CheckBounds(nextPos))
+        {
+            _appModel.inputDenied = false;
+            return;
+        }
 
         if (CheckEmpty(nextPos))
         {
-            if (IsMoveUp(direction)) return;
+            if (IsMoveUp(direction))
+            {
+                _appModel.inputDenied = false;
+                return;
+            }
 
             _board.Move(currIndex, nextIndex);
-            NotifyAnimateMove?.Invoke(currIndex, nextIndex, _board.GetPos(nextIndex));
+            _boardViewModel.AnimateMove(currIndex, nextIndex, _board.GetPos(nextIndex));
             return;
         }
 
         _board.Swap(currIndex, nextIndex);
-        NotifyAnimateSwap?.Invoke(currIndex, nextIndex, _board.GetPos(currIndex), _board.GetPos(nextIndex));
+        _boardViewModel.AnimateSwap(currIndex, nextIndex, _board.GetPos(currIndex), _board.GetPos(nextIndex));
     }
 
     private static bool IsMoveUp(Vector2Int direction)
@@ -157,9 +164,10 @@ public class BoardController
 
         if (_board.IsEmpty())
         {
-            _boardViewModel.Dispose();
             _signalBus.Fire<LevelCompletedSignal>();
         }
+
+        _appModel.inputDenied = false;
     }
 
     private async Task ProcessFlushes(Flushes flushes)
@@ -167,7 +175,7 @@ public class BoardController
         if (flushes.Count == 0) return;
 
         _board.Flush(flushes);
-        NotifyAnimateFlush?.Invoke(flushes);
+        _boardViewModel.AnimateFlush(flushes);
 
         await Task.Delay((int) (_cfg.flushTime * 1000));
     }
@@ -177,7 +185,7 @@ public class BoardController
         if (moves.Count == 0) return;
 
         _board.MoveBatch(moves);
-        NotifyAnimateMoveBatch?.Invoke(moves);
+        _boardViewModel.AnimateMoveBatch(moves);
 
         await Task.Delay((int) (_cfg.moveTime * 1000));
     }
@@ -194,4 +202,9 @@ public class BoardController
         return await _flushWorker.Work();
     }
 
+
+    public void Clear()
+    {
+        _boardViewModel.Clear();
+    }
 }

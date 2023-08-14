@@ -6,12 +6,14 @@ public class GameInstaller : MonoInstaller
 
     public override void InstallBindings()
     {
+        Container.Bind<AppModel>().ToSelf().AsSingle();
         Container.BindFactory<BoardViewModel, BoardViewModel.Factory>().ToSelf().AsCached();
 
         Container.Bind<ItemPool>().ToSelf().AsSingle();
         Container.Bind<NormalizeWorker>().ToSelf().AsSingle();
         Container.Bind<FlushWorker>().ToSelf().AsSingle();
         Container.Bind<GameManager>().FromComponentInHierarchy().AsSingle();
+        Container.Bind<UiController>().FromComponentInHierarchy().AsSingle();
 
         BindRepositories();
         BindSignals();
@@ -40,5 +42,7 @@ public class GameInstaller : MonoInstaller
         Container.BindSignal<ValidateBoard>().ToMethod<BoardController>((boardManager, signal) => boardManager.ValidateAndProcessBoard()).FromResolve();
         Container.DeclareSignal<LevelCompletedSignal>();
         Container.BindSignal<LevelCompletedSignal>().ToMethod<GameManager>((gameManager, signal) => gameManager.LevelCompleted()).FromResolve();
+        Container.DeclareSignal<ForceNextLevelSignal>();
+        Container.BindSignal<ForceNextLevelSignal>().ToMethod<GameManager>((gameManager, signal) => gameManager.ForceNextLevel()).FromResolve();
     }
 }
