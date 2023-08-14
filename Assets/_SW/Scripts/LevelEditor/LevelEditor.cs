@@ -9,6 +9,7 @@ public class LevelEditor : MonoBehaviour
 {
     [SerializeField] private Tilemap _tileMap;
     [SerializeField] private int _levelIndex;
+    [SerializeField] private LevelTile _emptyTile;
 
 
     [Button]
@@ -42,29 +43,20 @@ public class LevelEditor : MonoBehaviour
         level.width = _tileMap.cellBounds.size.x;
 
         RepositoryUtils.Save(level);
+        LoadLevel();
     }
 
-    private static IEnumerable<SavedTile> GetTilesFromMap(Tilemap map)
+    private IEnumerable<SavedTile> GetTilesFromMap(Tilemap map)
     {
         foreach (var pos in map.cellBounds.allPositionsWithin)
         {
-            if (map.GetTile(pos) == null) continue;
-
-            var levelTile = map.GetTile<LevelTile>(pos);
-            var cellBounds = map.cellBounds;
+            var levelTile = map.GetTile(pos) == null ? _emptyTile : map.GetTile<LevelTile>(pos);
 
             yield return new SavedTile
             {
-                position = AlignPos(pos, cellBounds),
+                position = pos,
                 tile = levelTile,
             };
         }
-    }
-
-    private static Vector3Int AlignPos(Vector3Int pos, BoundsInt bounds)
-    {
-        pos.x += bounds.size.x / 2;
-        pos.y += bounds.size.y / 2;
-        return pos;
     }
 }

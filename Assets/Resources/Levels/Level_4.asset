@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 161b270f9c304425abf3bd68e2fbd5b3, type: 3}
+  m_Name: Level_4
+  m_EditorClassIdentifier: 
+  index: 4
+  width: 3
+  tiles:
+  - position: {x: 0, y: -5, z: 0}
+    tile: {fileID: 11400000, guid: d7df9982f94374e759228afed4b20674, type: 2}
+  - position: {x: 1, y: -5, z: 0}
+    tile: {fileID: 11400000, guid: d7df9982f94374e759228afed4b20674, type: 2}
+  - position: {x: 2, y: -5, z: 0}
+    tile: {fileID: 11400000, guid: 49ef1825b03014f2285d75b93bced79f, type: 2}
+  - position: {x: 0, y: -4, z: 0}
+    tile: {fileID: 11400000, guid: 49ef1825b03014f2285d75b93bced79f, type: 2}
+  - position: {x: 1, y: -4, z: 0}
+    tile: {fileID: 11400000, guid: e325ca86ffe6540819228c961990d767, type: 2}
+  - position: {x: 2, y: -4, z: 0}
+    tile: {fileID: 11400000, guid: e325ca86ffe6540819228c961990d767, type: 2}
