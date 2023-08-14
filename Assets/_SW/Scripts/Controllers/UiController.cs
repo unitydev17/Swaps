@@ -28,6 +28,6 @@ public class UiController : MonoBehaviour
     public void FadeUnfade()
     {
         _fadeImg.DOKill();
-        _fadeImg.DOFade(0, 0.75f).From(1);
+        _fadeImg.DOFade(0, 1).From(1);
     }
 }

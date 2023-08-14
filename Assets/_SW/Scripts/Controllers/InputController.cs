@@ -3,6 +3,8 @@ using Zenject;
 
 public class InputController : MonoBehaviour
 {
+    [SerializeField] private float _threshold;
+
     private bool _tap;
     private Vector3 _prevMousePos;
     private Item _selectedItem;
@@ -49,6 +51,7 @@ public class InputController : MonoBehaviour
         _tap = false;
 
         var delta = mousePosition - _prevMousePos;
+        if (delta.sqrMagnitude < _threshold) return;
 
         var direction = Vector2Int.zero;
 
