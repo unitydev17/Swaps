@@ -1,9 +1,10 @@
+using System;
 using UnityEngine;
 using Zenject;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private Transform _root;
+    [SerializeField] private Transform _pivot;
 
     private Level _level;
     private UserData _userData;
@@ -46,7 +47,7 @@ public class GameManager : MonoBehaviour
         _level = _levelStorage.Load(levelIndex);
         var board = LevelToBoardMapper.Map(_level);
 
-        _boardController.SetBoard(board, _root);
+        _boardController.SetBoard(board, _pivot);
         _boardController.Activate();
     }
 
@@ -56,5 +57,10 @@ public class GameManager : MonoBehaviour
         {
             _userDataStorage.Save(_userData);
         }
+    }
+
+    private void Update()
+    {
+        _boardController?.CorrectRootScale();
     }
 }

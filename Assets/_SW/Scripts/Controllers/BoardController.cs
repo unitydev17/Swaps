@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 using Zenject;
 
 public class BoardController
@@ -13,7 +14,7 @@ public class BoardController
 
     private SignalBus _signalBus;
     private Board _board;
-    private Transform _root;
+    private Transform _pivot;
     private Configuration _cfg;
     private ItemPool _itemPool;
     private BoardViewModel _boardViewModel;
@@ -38,10 +39,10 @@ public class BoardController
         _flushWorker = flushWorker;
     }
 
-    public void SetBoard(Board board, Transform root)
+    public void SetBoard(Board board, Transform pivot)
     {
         _board = board;
-        _root = root;
+        _pivot = pivot;
     }
 
     public void Activate()
@@ -51,9 +52,24 @@ public class BoardController
 
     private void CreateBoard()
     {
+        AlignPivot();
+
         var items = CreateItemsFromModel();
         _boardViewModel = _boardViewModelFactory.Create();
         _boardViewModel.Init(items, _board);
+        
+        CorrectRootScale();
+    }
+
+    private void AlignPivot()
+    {
+        var pivotOffsetX = (_board.width - 1) * _cfg.offset.x * 0.5f;
+        _pivot.localPosition += Vector3.left * pivotOffsetX;
+    }
+
+    public void CorrectRootScale()
+    {
+        _pivot.parent.localScale = Vector3.one * _cfg.scaleCurve.Evaluate(_board.width / 10f);
     }
 
     private List<Item> CreateItemsFromModel()
@@ -76,7 +92,7 @@ public class BoardController
     {
         var item = _itemPool.Spawn(itemModel);
 
-        item.transform.parent = _root;
+        item.transform.parent = _pivot;
         item.index = i;
 
         var pos = _board.GetPos(i);

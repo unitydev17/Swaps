@@ -6,6 +6,8 @@ public class Configuration : ScriptableObjectInstaller<Configuration>
 {
     public int forceRunLevel;
     public Level[] levels;
+    public AnimationCurve scaleCurve;
+    
     public GameObject[] itemPrefabs;
     public Vector2 offset;
     public float moveTime;
