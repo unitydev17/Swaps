@@ -44,8 +44,8 @@ public class GameManager : MonoBehaviour
         NextLevel();
 
 
-        // _balloonManager.Setup(Camera.main);
-        // _balloonManager.Activate();
+        _balloonManager.Setup(Camera.main);
+        _balloonManager.Activate();
     }
 
     public void ForceNextLevel()

@@ -73,7 +73,9 @@ public class BoardController
 
     private void CorrectRootScale()
     {
-        _pivot.parent.localScale = Vector3.one * _cfg.scaleCurve.Evaluate(_board.width / 10f);
+        var scale = Vector3.one * _cfg.scaleCurve.Evaluate(_board.width / 10f);
+        scale *= Screen.width / (float) Screen.height * _cfg.GetTargetRatio();
+        _pivot.parent.localScale = scale;
     }
 
     private List<Item> CreateItemsFromModel()

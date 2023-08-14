@@ -4,6 +4,8 @@ using Zenject;
 [CreateAssetMenu(fileName = "Configuration", menuName = "Installers/Configuration")]
 public class Configuration : ScriptableObjectInstaller<Configuration>
 {
+    public Vector2 targetResolution;
+    
     public int forceRunLevel;
     public Level[] levels;
     public AnimationCurve scaleCurve;
@@ -33,5 +35,10 @@ public class Configuration : ScriptableObjectInstaller<Configuration>
     {
         if (forceRunLevel > 0) index = forceRunLevel;
         return (index - 1) % levels.Length + 1;
+    }
+
+    public float GetTargetRatio()
+    {
+        return targetResolution.x / targetResolution.y;
     }
 }
