@@ -9,7 +9,8 @@ public class Level : ScriptableObject
     public int width;
     public List<SavedTile> tiles;
 
-    public string assetName => GetLevelName(index);
+    public string assetName => GetLevelAsAssetName(index);
+    public static string GetLevelAsAssetName(int i) => $"{GetLevelName(i)}.asset";
     public static string GetLevelName(int i) => $"Level_{i}";
 }
 

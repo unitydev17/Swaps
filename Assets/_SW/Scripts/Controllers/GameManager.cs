@@ -35,6 +35,7 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         Input.multiTouchEnabled = false;
+        Application.targetFrameRate = 60;
     }
 
 
