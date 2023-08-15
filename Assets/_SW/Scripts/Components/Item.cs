@@ -1,4 +1,5 @@
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Item : MonoBehaviour
 {
@@ -14,17 +15,23 @@ public class Item : MonoBehaviour
         }
     }
 
-    private Transform _tr;
     private SpriteRenderer _spriteRenderer;
+
     private Animator _animator;
-    private static readonly int FlushTrigger = Animator.StringToHash("Flush");
 
     private void Awake()
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _animator = GetComponent<Animator>();
-        _tr = transform;
     }
+
+    private bool isWater => GetType() == typeof(WaterItem);
+
+    private void OnEnable()
+    {
+        _animator.Play(isWater ? "WaterIdle" : "FireIdle", 0, Random.Range(0, 1f));
+    }
+
 
     protected void Deactivate()
     {
@@ -38,6 +45,6 @@ public class Item : MonoBehaviour
 
     public void Flush()
     {
-        _animator.SetTrigger(FlushTrigger);
+        _animator.Play(isWater ? "WaterFlush" : "FireFlush");
     }
 }

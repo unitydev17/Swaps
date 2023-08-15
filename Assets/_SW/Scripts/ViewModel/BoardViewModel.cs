@@ -49,10 +49,11 @@ public class BoardViewModel
         AnimateMove(currItem, nextPos, () =>
         {
             currItem.index = nextIndex;
+            nextItem.index = currIndex;
             _signalBus.Fire<ValidateBoard>();
         });
 
-        AnimateMove(nextItem, currPos, () => { nextItem.index = currIndex; });
+        AnimateMove(nextItem, currPos);
     }
 
     public void AnimateMove(int index, int nextIndex, Vector2Int newPos)
@@ -84,7 +85,7 @@ public class BoardViewModel
         return _items.FirstOrDefault(item => item.index == index);
     }
 
-    private void AnimateMove(Component item, Vector2 position, Action callback)
+    private void AnimateMove(Component item, Vector2 position, Action callback = null)
     {
         var newPos = new Vector3(position.x * _cfg.offset.x, position.y * _cfg.offset.y, 0);
         item.DOKill(true);

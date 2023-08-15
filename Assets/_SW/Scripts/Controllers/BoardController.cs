@@ -168,6 +168,8 @@ public class BoardController
 
             flushes = FetchFlush();
             await ProcessFlushes(flushes);
+            
+            
         } while (moves.Count > 0 || flushes.Count > 0);
 
         if (_board.IsEmpty()) _signalBus.Fire<LevelCompletedSignal>();
@@ -178,17 +180,14 @@ public class BoardController
     private async Task ProcessFlushes(Flushes flushes)
     {
         if (flushes.Count == 0) return;
-
         _board.Flush(flushes);
         _boardViewModel.AnimateFlush(flushes);
-
         await Task.Delay((int) (_cfg.flushTime * 1000));
     }
 
     private async Task ProcessNormalized(Moves moves)
     {
         if (moves.Count == 0) return;
-
         _board.MoveBatch(moves);
         _boardViewModel.AnimateMoveBatch(moves);
 
