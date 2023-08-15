@@ -1,5 +1,4 @@
 using System;
-using System.Threading.Tasks;
 using UnityEngine;
 
 public class NormalizeWorker : IWorker<Moves>
@@ -11,7 +10,7 @@ public class NormalizeWorker : IWorker<Moves>
         _normBoard = new Board(board);
     }
 
-    public async Task<Moves> Work()
+    public Moves Work()
     {
         var moves = new Moves();
         try
@@ -51,8 +50,6 @@ public class NormalizeWorker : IWorker<Moves>
 
                     hadMoves = true;
                     moves.Add((i, targetIndex));
-
-                    await Task.Yield();
                 }
             } while (hadMoves);
         }

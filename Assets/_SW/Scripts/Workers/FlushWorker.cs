@@ -1,7 +1,3 @@
-using System;
-using System.Threading.Tasks;
-using UnityEngine;
-
 public class FlushWorker : IWorker<Flushes>
 {
     private Board _board;
@@ -11,21 +7,12 @@ public class FlushWorker : IWorker<Flushes>
         _board = board;
     }
 
-    public async Task<Flushes> Work()
+    public Flushes Work()
     {
         var flushes = new Flushes();
 
-        try
-        {
-            ProcessRows(flushes);
-            ProcessColumns(flushes);
-
-            await Task.Yield();
-        }
-        catch (Exception e)
-        {
-            Debug.Log(e.Message);
-        }
+        ProcessRows(flushes);
+        ProcessColumns(flushes);
 
         return flushes;
     }

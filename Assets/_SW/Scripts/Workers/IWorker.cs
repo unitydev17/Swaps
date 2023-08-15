@@ -1,7 +1,4 @@
-
-using System.Threading.Tasks;
-
-public interface IWorker<T>
+public interface IWorker<out T>
 {
-    public Task<T> Work();
+    public T Work();
 }

@@ -70,9 +70,9 @@ MonoBehaviour:
   - {fileID: 2499705151943224242, guid: 9b6ef0be98fe143999f2c0012cf9ef13, type: 3}
   - {fileID: 3857819261989990989, guid: dc42e9dc4cfcc469fb12c13a516a2fea, type: 3}
   heightRange: {x: 0.3, y: 0.8}
-  amplitudeRange: {x: 0.05, y: 0.1}
+  amplitudeRange: {x: 0.1, y: 0.2}
   periodRange: {x: 5, y: 10}
-  speedRange: {x: 0.05, y: 0.2}
+  speedRange: {x: 0.05, y: 0.1}
   scaleRange: {x: 1, y: 2}
   maxBalloons: 3
-  repeatPeriod: {x: 1, y: 2}
+  repeatPeriod: {x: 1, y: 3}

@@ -525,7 +525,7 @@ GameObject:
   - component: {fileID: 461662951}
   - component: {fileID: 461662952}
   m_Layer: 0
-  m_Name: BalloonController
+  m_Name: BalloonManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -163,10 +163,10 @@ public class BoardController
 
         do
         {
-            moves = await FetchNormalized();
+            moves = FetchNormalized();
             await ProcessNormalized(moves);
 
-            flushes = await FetchFlush();
+            flushes = FetchFlush();
             await ProcessFlushes(flushes);
         } while (moves.Count > 0 || flushes.Count > 0);
 
@@ -195,16 +195,16 @@ public class BoardController
         await Task.Delay((int) (_cfg.moveTime * 1000));
     }
 
-    private async Task<Moves> FetchNormalized()
+    private Moves FetchNormalized()
     {
         _normalizeWorker.Setup(_board);
-        return await _normalizeWorker.Work();
+        return _normalizeWorker.Work();
     }
 
-    private async Task<Flushes> FetchFlush()
+    private Flushes FetchFlush()
     {
         _flushWorker.Setup(_board);
-        return await _flushWorker.Work();
+        return _flushWorker.Work();
     }
 
 
