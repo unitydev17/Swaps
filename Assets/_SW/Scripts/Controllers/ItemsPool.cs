@@ -28,23 +28,37 @@ public class ItemPool
 
     public void Despawn(Item item)
     {
-        if (item is WaterItem waterItem) _waterItemPool.Despawn(waterItem);
-        if (item is FireItem fireItem) _fireItemPool.Despawn(fireItem);
+        switch (item)
+        {
+            case WaterItem waterItem:
+                _waterItemPool.Despawn(waterItem);
+                break;
+            case FireItem fireItem:
+                _fireItemPool.Despawn(fireItem);
+                break;
+        }
     }
 
     public Balloon Spawn(BalloonModel model)
     {
         return model switch
         {
-            OrangeBalloonModel _ => (Balloon) _orangePool.Spawn(),
-            BlueBalloonModel _ => (Balloon) _bluePool.Spawn(),
+            OrangeBalloonModel _ => _orangePool.Spawn(),
+            BlueBalloonModel _ => _bluePool.Spawn(),
             _ => null
         };
     }
 
     public void Despawn(object item)
     {
-        if (item is OrangeBalloon orangeBalloon) _orangePool.Despawn(orangeBalloon);
-        if (item is BlueBalloon blueBalloon) _bluePool.Despawn(blueBalloon);
+        switch (item)
+        {
+            case OrangeBalloon orangeBalloon:
+                _orangePool.Despawn(orangeBalloon);
+                break;
+            case BlueBalloon blueBalloon:
+                _bluePool.Despawn(blueBalloon);
+                break;
+        }
     }
 }

@@ -8,6 +8,7 @@ public class BalloonModel
     public float amplitude;
     public float period;
     public float scale;
+    public float minHeight;
 
     public Vector3 pos;
     public float time;
@@ -18,6 +19,6 @@ public class BalloonModel
         pos.x = Mathf.Lerp(widthRange.x, widthRange.y, time);
         pos.y = Mathf.Lerp(heightRange.x, heightRange.y, time);
         pos.y += amplitude * Mathf.Sin(period * time);
-        pos.y = Mathf.Max(pos.y, heightRange.x);
+        pos.y = Mathf.Max(pos.y, minHeight);
     }
 }

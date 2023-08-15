@@ -60,6 +60,7 @@ public class BalloonManager : MonoBehaviour
 
     private void Generate(BalloonModel model)
     {
+        model.minHeight = _cfg.heightRange.x;
         model.heightRange = new Vector2(_cfg.heightRange.Random(), _cfg.heightRange.Random());
         model.widthRange = Random.value > 0.5 ? new Vector2(-0.25f, 1.25f) : new Vector2(1.25f, -0.25f);
         model.amplitude = _cfg.amplitudeRange.Random();
