@@ -25,3 +25,7 @@ Unity.PlayerPrefsEditor.EditorResources.csproj
 Unity.PlayerPrefsEditor.Samples.SampleScene.csproj
 Unity.PlayerPrefsEditor.Samples.TestValueMenu.Editor.csproj
 UnityEditor.UI.csproj
+Library
+Temp
+.vs
+obj
