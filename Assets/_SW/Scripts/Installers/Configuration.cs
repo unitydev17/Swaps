@@ -8,7 +8,9 @@ public class Configuration : ScriptableObjectInstaller<Configuration>
     
     public int forceRunLevel;
     public Level[] levels;
-    public AnimationCurve scaleCurve;
+    public Sprite sprite;
+    public float spriteTransparencyKoeff;
+    public float maxSpriteScale;
     
     public GameObject[] itemPrefabs;
     public Vector2 offset;
@@ -24,6 +26,7 @@ public class Configuration : ScriptableObjectInstaller<Configuration>
     public Vector2 scaleRange;
     public int maxBalloons;
     public Vector2 repeatPeriod;
+
 
     public override void InstallBindings()
     {

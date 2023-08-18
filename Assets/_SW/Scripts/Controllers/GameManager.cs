@@ -69,7 +69,7 @@ public class GameManager : MonoBehaviour
         _level = _levelStorage.Load(levelIndex);
         var board = LevelToBoardMapper.Map(_level);
 
-        _boardController.SetBoard(board, _pivot);
+        _boardController.SetBoard(board, _pivot, Camera.main);
         _boardController.Activate();
     }
 

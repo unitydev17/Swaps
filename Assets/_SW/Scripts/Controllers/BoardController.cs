@@ -16,6 +16,7 @@ public class BoardController
     private NormalizeWorker _normalizeWorker;
     private FlushWorker _flushWorker;
     private AppModel _appModel;
+    private Camera _camera;
 
 
     [Inject]
@@ -37,10 +38,11 @@ public class BoardController
         _flushWorker = flushWorker;
     }
 
-    public void SetBoard(Board board, Transform pivot)
+    public void SetBoard(Board board, Transform pivot, Camera camera)
     {
         _board = board;
         _pivot = pivot;
+        _camera = camera;
     }
 
     public void Activate()
@@ -73,9 +75,10 @@ public class BoardController
 
     private void CorrectRootScale()
     {
-        var scale = Vector3.one * _cfg.scaleCurve.Evaluate(_board.width / 10f);
-        scale *= Screen.width / (float) Screen.height * _cfg.GetTargetRatio();
-        _pivot.parent.localScale = scale;
+        var spriteInUnits = _cfg.sprite.texture.width / _cfg.sprite.pixelsPerUnit;
+        var scale = _camera.aspect * _camera.orthographicSize * 2 / (_board.width * spriteInUnits * _cfg.spriteTransparencyKoeff);
+        scale = Mathf.Min(scale, _cfg.maxSpriteScale);
+        _pivot.parent.localScale = Vector3.one * scale;
     }
 
     private List<Item> CreateItemsFromModel()
@@ -168,8 +171,6 @@ public class BoardController
 
             flushes = FetchFlush();
             await ProcessFlushes(flushes);
-            
-            
         } while (moves.Count > 0 || flushes.Count > 0);
 
         if (_board.IsEmpty()) _signalBus.Fire<LevelCompletedSignal>();
