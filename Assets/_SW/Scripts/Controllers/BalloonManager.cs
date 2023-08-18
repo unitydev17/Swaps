@@ -34,9 +34,10 @@ public class BalloonManager : MonoBehaviour
             if (_counter < _cfg.maxBalloons)
             {
                 var model = GetRandomModel();
-                Generate(model);
-
                 var item = _itemPool.Spawn(model);
+
+                Generate(item, model);
+
                 item.SetSortingOrder(GetSort(model));
 
                 _counter++;
@@ -48,7 +49,7 @@ public class BalloonManager : MonoBehaviour
 
         int GetSort(BalloonModel model)
         {
-            return (int) ((_cfg.scaleRange.y - model.scale) * -100);
+            return (int) ((_cfg.scaleRange.y - model.scale) * -_cfg.maxBalloons);
         }
     }
 
@@ -58,37 +59,48 @@ public class BalloonManager : MonoBehaviour
     }
 
 
-    private void Generate(BalloonModel model)
+    private void Generate(BaseComponent item, BalloonModel model)
     {
-        model.minHeight = _cfg.heightRange.x;
-        model.heightRange = new Vector2(_cfg.heightRange.Random(), _cfg.heightRange.Random());
-        model.widthRange = Random.value > 0.5 ? new Vector2(-0.25f, 1.25f) : new Vector2(1.25f, -0.25f);
+        model.minHeight = _camera.ViewportToWorldPoint(Vector3.up * _cfg.minHeight).y;
+        model.heightRange = _camera.ViewportToWorldPoint(new Vector2(_cfg.minHeight, _cfg.minHeight + Random.Range(0, 1 - _cfg.minHeight)));
         model.amplitude = _cfg.amplitudeRange.Random();
         model.period = _cfg.periodRange.Random();
         model.speed = _cfg.speedRange.Random();
         model.scale = _cfg.scaleRange.Random();
+        model.widthRange = GetModelWidthRange(item, model.scale);
+
         model.time = 0;
     }
 
-    private IEnumerator FlyCoroutine(BalloonModel model, Balloon item)
+    private Vector2 GetModelWidthRange(BaseComponent item, float modelScale)
+    {
+        var sprite = item.sprite;
+        var spriteExtentInUnits = sprite.texture.width / sprite.pixelsPerUnit * 0.5f;
+        var screenExtentInUnits = _camera.aspect * _camera.orthographicSize;
+
+        var leftCorner = -screenExtentInUnits;
+        var rightCorner = screenExtentInUnits;
+
+
+        var scaledExtentInUnits = spriteExtentInUnits * modelScale;
+        var from = leftCorner - scaledExtentInUnits;
+        var to = rightCorner + scaledExtentInUnits;
+
+        return Random.value > 0.5f ? new Vector2(from, to) : new Vector2(to, from);
+    }
+
+    private IEnumerator FlyCoroutine(BalloonModel model, Component item)
     {
         item.transform.localScale = model.scale * Vector3.one;
         do
         {
             model.Update();
-            item.transform.position = GetWorldPosition(model);
+            item.transform.position = model.pos;
 
             yield return null;
         } while (model.time < 1);
 
         _itemPool.Despawn(item);
         _counter--;
-    }
-
-    private Vector3 GetWorldPosition(BalloonModel model)
-    {
-        var pos = _camera.ViewportToWorldPoint(model.pos);
-        pos.z = 0;
-        return pos;
     }
 }

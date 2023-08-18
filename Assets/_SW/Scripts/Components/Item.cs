@@ -1,7 +1,7 @@
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class Item : MonoBehaviour
+public class Item : BaseComponent
 {
     private int _index;
 
@@ -11,18 +11,18 @@ public class Item : MonoBehaviour
         set
         {
             _index = value;
-            _spriteRenderer.sortingOrder = _index;
+            SetSortingOrder(_index);
         }
     }
 
-    private SpriteRenderer _spriteRenderer;
 
     private Animator _animator;
 
-    private void Awake()
+    protected override void Awake()
     {
-        _spriteRenderer = GetComponent<SpriteRenderer>();
+        base.Awake();
         _animator = GetComponent<Animator>();
+        SetSortingOrder(_index);
     }
 
     private bool isWater => GetType() == typeof(WaterItem);

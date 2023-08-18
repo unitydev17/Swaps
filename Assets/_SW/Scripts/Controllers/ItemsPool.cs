@@ -1,3 +1,4 @@
+using UnityEngine;
 using Zenject;
 
 public class ItemPool
@@ -39,7 +40,7 @@ public class ItemPool
         }
     }
 
-    public Balloon Spawn(BalloonModel model)
+    public BaseComponent Spawn(BalloonModel model)
     {
         return model switch
         {

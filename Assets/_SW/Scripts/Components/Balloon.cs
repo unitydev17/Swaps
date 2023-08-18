@@ -1,16 +1,9 @@
 using UnityEngine;
 
-public abstract class Balloon : MonoBehaviour
+public class Balloon : BaseComponent
 {
-    private SpriteRenderer _spriteRenderer;
-
-    private void Awake()
+    protected override void Awake()
     {
-        _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
-    }
-
-    public void SetSortingOrder(int value)
-    {
-        _spriteRenderer.sortingOrder = value;
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
     }
 }

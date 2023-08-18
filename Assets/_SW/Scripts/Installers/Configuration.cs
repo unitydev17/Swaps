@@ -19,13 +19,13 @@ public class Configuration : ScriptableObjectInstaller<Configuration>
     
     [Header("Balloon")]
     public GameObject[] balloonPrefabs;
-    public Vector2 heightRange;
     public Vector2 amplitudeRange;
     public Vector2 periodRange;
     public Vector2 speedRange;
     public Vector2 scaleRange;
     public int maxBalloons;
     public Vector2 repeatPeriod;
+    public float minHeight;
 
 
     public override void InstallBindings()
