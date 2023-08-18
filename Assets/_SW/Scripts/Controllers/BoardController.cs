@@ -171,11 +171,7 @@ public class BoardController
 
             flushes = FetchFlush();
             await ProcessFlushes(flushes);
-<<<<<<< HEAD
-=======
 
-
->>>>>>> 9701764... Magic number removal
         } while (moves.Count > 0 || flushes.Count > 0);
 
         if (_board.IsEmpty()) _signalBus.Fire<LevelCompletedSignal>();
