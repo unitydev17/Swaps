@@ -1,17 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ModestTree;
 using UnityEngine;
 using Zenject;
 
-public class BoardController
+public class BoardController : IInitializable, IDisposable
 {
+    public static event Action OnLevelCompleted;
+    public static event Action OnImpossibleToComplete;
+
+
     private BoardViewModel _boardViewModel;
     private Board _board;
     private Transform _pivot;
 
-    private SignalBus _signalBus;
     private Configuration _cfg;
     private ItemPool _itemPool;
     private BoardViewModel.Factory _boardViewModelFactory;
@@ -25,7 +27,6 @@ public class BoardController
     private void Construct(
         AppModel appModel,
         Configuration cfg,
-        SignalBus signalBus,
         ItemPool itemPool,
         BoardViewModel.Factory boardViewModelFactory,
         NormalizeWorker normalizeWorker,
@@ -33,12 +34,23 @@ public class BoardController
     {
         _appModel = appModel;
         _cfg = cfg;
-        _signalBus = signalBus;
         _itemPool = itemPool;
         _boardViewModelFactory = boardViewModelFactory;
         _normalizeWorker = normalizeWorker;
         _flushWorker = flushWorker;
     }
+    
+    
+    public void Initialize()
+    {
+        InputController.OnMove += ProcessMove;
+    }
+
+    public void Dispose()
+    {
+        InputController.OnMove -= ProcessMove;
+    }
+    
 
     public void SetBoard(Board board, Transform pivot, Camera camera)
     {
@@ -137,12 +149,12 @@ public class BoardController
             }
 
             _board.Move(currIndex, nextIndex);
-            _boardViewModel.AnimateMove(currIndex, nextIndex, _board.GetPos(nextIndex));
+            _boardViewModel.AnimateMove(currIndex, nextIndex, _board.GetPos(nextIndex), async () => await ValidateAndProcessBoard());
             return;
         }
 
         _board.Swap(currIndex, nextIndex);
-        _boardViewModel.AnimateSwap(currIndex, nextIndex, _board.GetPos(currIndex), _board.GetPos(nextIndex));
+        _boardViewModel.AnimateSwap(currIndex, nextIndex, _board.GetPos(currIndex), _board.GetPos(nextIndex), async () => await ValidateAndProcessBoard());
     }
 
     private static bool IsMoveUp(Vector2Int direction)
@@ -177,8 +189,8 @@ public class BoardController
                 await ProcessFlushes(flushes);
             } while (moves.Count > 0 || flushes.Count > 0);
 
-            if (_board.IsEmpty()) _signalBus.Fire<LevelCompletedSignal>();
-            else if (_board.IsImpossibleToComplete()) _signalBus.Fire<RetryButtonRequiredSignal>();
+            if (_board.IsEmpty()) OnLevelCompleted?.Invoke();
+            else if (_board.IsImpossibleToComplete()) OnImpossibleToComplete?.Invoke();
         }
         catch (Exception e)
         {
@@ -222,4 +234,5 @@ public class BoardController
     {
         _boardViewModel.Clear();
     }
+    
 }

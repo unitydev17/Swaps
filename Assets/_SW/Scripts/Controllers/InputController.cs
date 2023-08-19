@@ -1,22 +1,16 @@
+using System;
 using UnityEngine;
-using Zenject;
 
 public class InputController : MonoBehaviour
 {
+    public static event Action<Item, Vector2Int> OnMove;
+
     [SerializeField] private float _threshold;
 
     private bool _tap;
     private Vector3 _prevMousePos;
     private Item _selectedItem;
     private Camera _camera;
-
-    private SignalBus _signalBus;
-
-    [Inject]
-    public void Construct(SignalBus signalBus)
-    {
-        _signalBus = signalBus;
-    }
 
     private void Start()
     {
@@ -64,6 +58,6 @@ public class InputController : MonoBehaviour
             direction.y = delta.y > 0 ? 1 : -1;
         }
 
-        _signalBus.Fire(new MoveItemSignal(_selectedItem, direction));
+        OnMove?.Invoke(_selectedItem, direction);
     }
 }

@@ -38,6 +38,20 @@ public class GameManager : MonoBehaviour
         Application.targetFrameRate = 60;
     }
 
+    private void OnEnable()
+    {
+        BoardController.OnLevelCompleted += LevelCompleted;
+        UiController.OnRetry += RetryLevel;
+        UiController.OnForceNextLevel += ForceNextLevel;
+    }
+
+    private void OnDisable()
+    {
+        BoardController.OnLevelCompleted -= LevelCompleted;
+        UiController.OnRetry -= RetryLevel;
+        UiController.OnForceNextLevel -= ForceNextLevel;
+    }
+
 
     private void Start()
     {

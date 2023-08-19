@@ -10,15 +10,13 @@ public class BoardViewModel
     private List<Item> _items;
     private Board _board;
     private Configuration _cfg;
-    private SignalBus _signalBus;
     private ItemPool _itemPool;
 
 
     [Inject]
-    private void Construct(Configuration cfg, SignalBus signalBus, ItemPool itemPool)
+    private void Construct(Configuration cfg, ItemPool itemPool)
     {
         _cfg = cfg;
-        _signalBus = signalBus;
         _itemPool = itemPool;
     }
 
@@ -41,7 +39,7 @@ public class BoardViewModel
         }
     }
 
-    public void AnimateSwap(int currIndex, int nextIndex, Vector2Int currPos, Vector2Int nextPos)
+    public void AnimateSwap(int currIndex, int nextIndex, Vector2Int currPos, Vector2Int nextPos, Action callback)
     {
         var currItem = GetItem(currIndex);
         var nextItem = GetItem(nextIndex);
@@ -50,20 +48,20 @@ public class BoardViewModel
         {
             currItem.index = nextIndex;
             nextItem.index = currIndex;
-            _signalBus.Fire<ValidateBoard>();
+            callback?.Invoke();
         });
 
         AnimateMove(nextItem, currPos);
     }
 
-    public void AnimateMove(int index, int nextIndex, Vector2Int newPos)
+    public void AnimateMove(int index, int nextIndex, Vector2Int newPos, Action callback)
     {
         var item = GetItem(index);
 
         AnimateMove(item, newPos, () =>
         {
             item.index = nextIndex;
-            _signalBus.Fire<ValidateBoard>();
+            callback?.Invoke();
         });
     }
 

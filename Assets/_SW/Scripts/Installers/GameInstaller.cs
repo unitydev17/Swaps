@@ -12,11 +12,10 @@ public class GameInstaller : MonoInstaller
         Container.Bind<FlushWorker>().ToSelf().AsSingle();
         Container.Bind<GameManager>().FromComponentInHierarchy().AsSingle();
         Container.Bind<UiController>().FromComponentInHierarchy().AsSingle();
-        Container.Bind<BoardController>().ToSelf().AsSingle();
+        Container.BindInterfacesAndSelfTo<BoardController>().AsSingle();
         Container.Bind<BalloonManager>().FromComponentInHierarchy().AsSingle();
-
+        
         BindRepositories();
-        BindSignals();
         BindPools();
         BindFactories();
     }
@@ -38,22 +37,5 @@ public class GameInstaller : MonoInstaller
     {
         Container.Bind<IRepository>().To<LevelStorage>().AsSingle();
         Container.Bind<IUserRepository>().To<UserDataStorage>().AsSingle();
-    }
-
-    private void BindSignals()
-    {
-        SignalBusInstaller.Install(Container);
-        Container.DeclareSignal<MoveItemSignal>();
-        Container.BindSignal<MoveItemSignal>().ToMethod<BoardController>((boardManager, signal) => boardManager.ProcessMove(signal.item, signal.direction)).FromResolve();
-        Container.DeclareSignal<ValidateBoard>();
-        Container.BindSignal<ValidateBoard>().ToMethod<BoardController>((boardManager, signal) => boardManager.ValidateAndProcessBoard()).FromResolve();
-        Container.DeclareSignal<LevelCompletedSignal>();
-        Container.BindSignal<LevelCompletedSignal>().ToMethod<GameManager>((gameManager, signal) => gameManager.LevelCompleted()).FromResolve();
-        Container.DeclareSignal<ForceNextLevelSignal>();
-        Container.BindSignal<ForceNextLevelSignal>().ToMethod<GameManager>((gameManager, signal) => gameManager.ForceNextLevel()).FromResolve();
-        Container.DeclareSignal<RetryLevelSignal>();
-        Container.BindSignal<RetryLevelSignal>().ToMethod<GameManager>((gameManager, signal) => gameManager.RetryLevel()).FromResolve();
-        Container.DeclareSignal<RetryButtonRequiredSignal>();
-        Container.BindSignal<RetryButtonRequiredSignal>().ToMethod<UiController>((uiController, signal) => uiController.AppearRetryButton()).FromResolve();
     }
 }
