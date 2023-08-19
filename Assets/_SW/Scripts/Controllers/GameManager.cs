@@ -53,6 +53,13 @@ public class GameManager : MonoBehaviour
     {
         _boardController.Clear();
         LevelCompleted();
+        _ui.DisappearRetryButton();
+    }
+    
+    public void RetryLevel()
+    {
+        _boardController.Clear();
+        NextLevel();
     }
 
     public void LevelCompleted()

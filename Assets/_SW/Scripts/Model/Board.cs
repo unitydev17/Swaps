@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -80,5 +82,18 @@ public class Board
     public bool IsEmpty()
     {
         return !items.Any(ItemModel.IsNotEmpty);
+    }
+
+    public bool IsImpossibleToComplete()
+    {
+        var dict = new Dictionary<Type, int>();
+        foreach (var type in items.Select(item => item.GetType()))
+        {
+            if (type == typeof(EmptyModel)) continue;
+            dict.TryGetValue(type, out var counter);
+            dict[type] = counter + 1;
+        }
+
+        return dict.Values.All(value => value <= 2);
     }
 }

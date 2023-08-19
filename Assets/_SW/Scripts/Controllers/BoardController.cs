@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ModestTree;
 using UnityEngine;
 using Zenject;
 
@@ -161,20 +163,27 @@ public class BoardController
 
     public async Task ValidateAndProcessBoard()
     {
-        Moves moves;
-        Flushes flushes;
-
-        do
+        try
         {
-            moves = FetchNormalized();
-            await ProcessNormalized(moves);
+            Moves moves;
+            Flushes flushes;
 
-            flushes = FetchFlush();
-            await ProcessFlushes(flushes);
+            do
+            {
+                moves = FetchNormalized();
+                await ProcessNormalized(moves);
 
-        } while (moves.Count > 0 || flushes.Count > 0);
+                flushes = FetchFlush();
+                await ProcessFlushes(flushes);
+            } while (moves.Count > 0 || flushes.Count > 0);
 
-        if (_board.IsEmpty()) _signalBus.Fire<LevelCompletedSignal>();
+            if (_board.IsEmpty()) _signalBus.Fire<LevelCompletedSignal>();
+            else if (_board.IsImpossibleToComplete()) _signalBus.Fire<RetryButtonRequiredSignal>();
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e.Message);
+        }
 
         _appModel.inputDenied = false;
     }

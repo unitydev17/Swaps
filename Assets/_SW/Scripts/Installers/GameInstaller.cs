@@ -51,5 +51,9 @@ public class GameInstaller : MonoInstaller
         Container.BindSignal<LevelCompletedSignal>().ToMethod<GameManager>((gameManager, signal) => gameManager.LevelCompleted()).FromResolve();
         Container.DeclareSignal<ForceNextLevelSignal>();
         Container.BindSignal<ForceNextLevelSignal>().ToMethod<GameManager>((gameManager, signal) => gameManager.ForceNextLevel()).FromResolve();
+        Container.DeclareSignal<RetryLevelSignal>();
+        Container.BindSignal<RetryLevelSignal>().ToMethod<GameManager>((gameManager, signal) => gameManager.RetryLevel()).FromResolve();
+        Container.DeclareSignal<RetryButtonRequiredSignal>();
+        Container.BindSignal<RetryButtonRequiredSignal>().ToMethod<UiController>((uiController, signal) => uiController.AppearRetryButton()).FromResolve();
     }
 }
