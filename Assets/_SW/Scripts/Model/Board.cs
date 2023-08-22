@@ -94,6 +94,6 @@ public class Board
             dict[type] = counter + 1;
         }
 
-        return dict.Values.All(value => value <= 2);
+        return dict.Values.Any(value => value <= 2);
     }
 }
