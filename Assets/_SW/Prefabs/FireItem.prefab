@@ -11,10 +11,10 @@ GameObject:
   - component: {fileID: 3621782528884498}
   - component: {fileID: 3094927042481233259}
   - component: {fileID: 9032755893318694838}
-  - component: {fileID: 2156785843792064837}
   - component: {fileID: 2405582758245796178}
+  - component: {fileID: 9185182070787142010}
   m_Layer: 0
-  m_Name: FireSprite
+  m_Name: FireItem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -132,18 +132,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 2.55, y: 2.55}
   m_EdgeRadius: 0
---- !u!114 &2156785843792064837
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6356604426572307213}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af0a78fff0fb431d97bf6ce3ce7a6f9f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!95 &2405582758245796178
 Animator:
   serializedVersion: 5
@@ -165,3 +153,16 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &9185182070787142010
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6356604426572307213}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d966783b4b0d4720818b3a1ad77d3a03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 1

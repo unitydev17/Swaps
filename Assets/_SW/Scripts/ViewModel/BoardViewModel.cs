@@ -10,14 +10,14 @@ public class BoardViewModel
     private List<Item> _items;
     private Board _board;
     private Configuration _cfg;
-    private ItemPool _itemPool;
+    private GamePool _gamePool;
 
 
     [Inject]
-    private void Construct(Configuration cfg, ItemPool itemPool)
+    private void Construct(Configuration cfg, GamePool gamePool)
     {
         _cfg = cfg;
-        _itemPool = itemPool;
+        _gamePool = gamePool;
     }
 
     public void Init(List<Item> items, Board board)
@@ -34,7 +34,7 @@ public class BoardViewModel
             DOVirtual.DelayedCall(_cfg.flushTime, () =>
             {
                 _items.Remove(item);
-                _itemPool.Despawn(item);
+                _gamePool.Despawn(item);
             }, false);
         }
     }
@@ -100,7 +100,7 @@ public class BoardViewModel
     {
         foreach (var item in _items)
         {
-            _itemPool.Despawn(item);
+            _gamePool.Despawn(item);
         }
     }
 }

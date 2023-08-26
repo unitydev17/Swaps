@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
     private Configuration _cfg;
     private IUserRepository _userDataStorage;
     private UiController _ui;
+    private AppModel _appModel;
 
     [Inject]
     public void Construct(
@@ -22,7 +23,8 @@ public class GameManager : MonoBehaviour
         IRepository levelStorage,
         IUserRepository userDataStorage,
         UiController ui,
-        BalloonManager balloonManager)
+        BalloonManager balloonManager,
+        AppModel appModel)
     {
         _cfg = cfg;
         _boardController = boardController;
@@ -30,6 +32,7 @@ public class GameManager : MonoBehaviour
         _userDataStorage = userDataStorage;
         _ui = ui;
         _balloonManager = balloonManager;
+        _appModel = appModel;
     }
 
     private void Awake()
@@ -61,22 +64,24 @@ public class GameManager : MonoBehaviour
 
         _balloonManager.Setup(Camera.main);
         _balloonManager.Activate();
+
+        _appModel.gameActive = true;
     }
 
-    public void ForceNextLevel()
+    private void ForceNextLevel()
     {
         _boardController.Clear();
         LevelCompleted();
         _ui.DisappearRetryButton();
     }
-    
-    public void RetryLevel()
+
+    private void RetryLevel()
     {
         _boardController.Clear();
         NextLevel();
     }
 
-    public void LevelCompleted()
+    private void LevelCompleted()
     {
         _userData.currentLevel++;
 

@@ -15,32 +15,33 @@ public class BoardController : IInitializable, IDisposable
     private Transform _pivot;
 
     private Configuration _cfg;
-    private ItemPool _itemPool;
     private BoardViewModel.Factory _boardViewModelFactory;
     private NormalizeWorker _normalizeWorker;
     private FlushWorker _flushWorker;
     private AppModel _appModel;
     private Camera _camera;
 
+    private GamePool _commonPool;
+
 
     [Inject]
     private void Construct(
         AppModel appModel,
         Configuration cfg,
-        ItemPool itemPool,
         BoardViewModel.Factory boardViewModelFactory,
         NormalizeWorker normalizeWorker,
-        FlushWorker flushWorker)
+        FlushWorker flushWorker,
+        GamePool commonPool)
     {
         _appModel = appModel;
         _cfg = cfg;
-        _itemPool = itemPool;
         _boardViewModelFactory = boardViewModelFactory;
         _normalizeWorker = normalizeWorker;
         _flushWorker = flushWorker;
+        _commonPool = commonPool;
     }
-    
-    
+
+
     public void Initialize()
     {
         InputController.OnMove += ProcessMove;
@@ -50,7 +51,7 @@ public class BoardController : IInitializable, IDisposable
     {
         InputController.OnMove -= ProcessMove;
     }
-    
+
 
     public void SetBoard(Board board, Transform pivot, Camera camera)
     {
@@ -113,7 +114,17 @@ public class BoardController : IInitializable, IDisposable
 
     private Item CreateItem(ItemModel itemModel, int i)
     {
-        var item = _itemPool.Spawn(itemModel);
+        Item item;
+
+        if (itemModel is FireModel)
+        {
+            item = (Item) _commonPool.Spawn(BaseComponent.Type.FireItem);
+        }
+        else
+        {
+            item = (Item) _commonPool.Spawn(BaseComponent.Type.WaterItem);
+        }
+
 
         item.transform.parent = _pivot;
         item.index = i;
@@ -125,7 +136,7 @@ public class BoardController : IInitializable, IDisposable
     }
 
 
-    public void ProcessMove(Item item, Vector2Int direction)
+    private void ProcessMove(Item item, Vector2Int direction)
     {
         if (_appModel.inputDenied) return;
         _appModel.inputDenied = true;
@@ -234,5 +245,4 @@ public class BoardController : IInitializable, IDisposable
     {
         _boardViewModel.Clear();
     }
-    
 }

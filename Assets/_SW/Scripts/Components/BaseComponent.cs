@@ -1,7 +1,18 @@
 using UnityEngine;
+using Zenject;
 
-public class BaseComponent : MonoBehaviour
+public class BaseComponent : MonoBehaviour, IPoolable
 {
+    public enum Type
+    {
+        WaterItem,
+        FireItem,
+        BlueBalloon,
+        OrangeBalloon
+    }
+
+    public Type type;
+
     protected SpriteRenderer spriteRenderer;
 
     protected virtual void Awake()
@@ -16,4 +27,12 @@ public class BaseComponent : MonoBehaviour
     }
 
     public Sprite sprite => spriteRenderer.sprite;
+
+    public virtual void OnDespawned()
+    {
+    }
+
+    public virtual void OnSpawned()
+    {
+    }
 }

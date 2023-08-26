@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2933597835298924126}
-  - component: {fileID: -617355659931113039}
+  - component: {fileID: 6875551655536044182}
   m_Layer: 0
   m_Name: OrangeBalloon
   m_TagString: Untagged
@@ -33,7 +33,7 @@ Transform:
   - {fileID: 6600724233173069212}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-617355659931113039
+--- !u!114 &6875551655536044182
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -42,9 +42,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 2499705151943224242}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 55f918e22ed8424c996d5077b1f437df, type: 3}
+  m_Script: {fileID: 11500000, guid: ade0aa1391af42188cbf0d56656efe66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  type: 3
 --- !u!1 &8291467670711249161
 GameObject:
   m_ObjectHideFlags: 0

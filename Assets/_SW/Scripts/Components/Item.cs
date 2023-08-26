@@ -15,7 +15,6 @@ public class Item : BaseComponent
         }
     }
 
-
     private Animator _animator;
 
     protected override void Awake()
@@ -25,26 +24,29 @@ public class Item : BaseComponent
         SetSortingOrder(_index);
     }
 
-    private bool isWater => GetType() == typeof(WaterItem);
+    private bool isWater => type == Type.WaterItem;
 
     private void OnEnable()
     {
-        _animator.Play(isWater ? "WaterIdle" : "FireIdle", 0, Random.Range(0, 1f));
+        _animator.Play(idleAnimation, 0, Random.Range(0, 1f));
     }
 
+    private string idleAnimation => isWater ? Constants.WaterIdleAnimation : Constants.FireIdleAnimation;
 
-    protected void Deactivate()
+    public void Flush()
     {
-        gameObject.SetActive(false);
+        _animator.Play(flushAnimation);
     }
 
-    protected void Activate()
+    private string flushAnimation => isWater ? Constants.WaterFlushAnimation : Constants.FireFlushAnimation;
+
+    public override void OnSpawned()
     {
         gameObject.SetActive(true);
     }
 
-    public void Flush()
+    public override void OnDespawned()
     {
-        _animator.Play(isWater ? "WaterFlush" : "FireFlush");
+        gameObject.SetActive(false);
     }
 }

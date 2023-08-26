@@ -8,13 +8,15 @@ public class BalloonManager : MonoBehaviour
     private Camera _camera;
 
     private Configuration _cfg;
-    private ItemPool _itemPool;
+    private GamePool _itemPool;
+    private AppModel _appModel;
 
     [Inject]
-    public void Construct(Configuration cfg, ItemPool itemPool)
+    public void Construct(Configuration cfg, GamePool itemPool, AppModel appModel)
     {
         _cfg = cfg;
         _itemPool = itemPool;
+        _appModel = appModel;
     }
 
     public void Setup(Camera cam)
@@ -33,43 +35,43 @@ public class BalloonManager : MonoBehaviour
         {
             if (_counter < _cfg.maxBalloons)
             {
-                var model = GetRandomModel();
-                var item = _itemPool.Spawn(model);
-
-                Generate(item, model);
-
-                item.SetSortingOrder(GetSort(model));
+                var item = (Balloon) _itemPool.Spawn(GetRandomBalloonType());
+                item.model = GenerateModel(item);
+                item.SetSortingOrder(GetSort(item));
 
                 _counter++;
-                StartCoroutine(FlyCoroutine(model, item));
+                StartCoroutine(FlyCoroutine(item));
             }
 
             yield return new WaitForSeconds(_cfg.repeatPeriod.Random());
-        } while (true);
+        } while (_appModel.gameActive);
 
-        int GetSort(BalloonModel model)
+        int GetSort(Balloon item)
         {
-            return (int) ((_cfg.scaleRange.y - model.scale) * -_cfg.maxBalloons);
+            return (int) ((_cfg.scaleRange.y - item.model.scale) * -_cfg.maxBalloons);
         }
     }
 
-    private static BalloonModel GetRandomModel()
+    private static BaseComponent.Type GetRandomBalloonType()
     {
-        return Random.value > 0.5f ? (BalloonModel) new OrangeBalloonModel() : new BlueBalloonModel();
+        return Random.value > 0.5f ? BaseComponent.Type.BlueBalloon : BaseComponent.Type.OrangeBalloon;
     }
 
 
-    private void Generate(BaseComponent item, BalloonModel model)
+    private BalloonModel GenerateModel(BaseComponent item)
     {
-        model.minHeight = _camera.ViewportToWorldPoint(Vector3.up * _cfg.minHeight).y;
-        model.heightRange = _camera.ViewportToWorldPoint(new Vector2(_cfg.minHeight, _cfg.minHeight + Random.Range(0, 1 - _cfg.minHeight)));
-        model.amplitude = _cfg.amplitudeRange.Random();
-        model.period = _cfg.periodRange.Random();
-        model.speed = _cfg.speedRange.Random();
-        model.scale = _cfg.scaleRange.Random();
+        var model = new BalloonModel
+        {
+            minHeight = _camera.ViewportToWorldPoint(Vector3.up * _cfg.minHeight).y,
+            heightRange = _camera.ViewportToWorldPoint(new Vector2(_cfg.minHeight, _cfg.minHeight + Random.Range(0, 1 - _cfg.minHeight))),
+            amplitude = _cfg.amplitudeRange.Random(),
+            period = _cfg.periodRange.Random(),
+            speed = _cfg.speedRange.Random(),
+            scale = _cfg.scaleRange.Random(),
+            time = 0
+        };
         model.widthRange = GetModelWidthRange(item, model.scale);
-
-        model.time = 0;
+        return model;
     }
 
     private Vector2 GetModelWidthRange(BaseComponent item, float modelScale)
@@ -89,16 +91,16 @@ public class BalloonManager : MonoBehaviour
         return Random.value > 0.5f ? new Vector2(from, to) : new Vector2(to, from);
     }
 
-    private IEnumerator FlyCoroutine(BalloonModel model, Component item)
+    private IEnumerator FlyCoroutine(Balloon item)
     {
-        item.transform.localScale = model.scale * Vector3.one;
+        item.transform.localScale = item.model.scale * Vector3.one;
         do
         {
-            model.Update();
-            item.transform.position = model.pos;
+            item.model.Update();
+            item.transform.position = item.model.pos;
 
             yield return null;
-        } while (model.time < 1);
+        } while (item.model.time < 1);
 
         _itemPool.Despawn(item);
         _counter--;

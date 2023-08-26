@@ -4,21 +4,20 @@ using Zenject;
 [CreateAssetMenu(fileName = "Configuration", menuName = "Installers/Configuration")]
 public class Configuration : ScriptableObjectInstaller<Configuration>
 {
-    public Vector2 targetResolution;
-    
     public int forceRunLevel;
     public Level[] levels;
     public Sprite sprite;
     public float spriteTransparencyKoeff;
     public float maxSpriteScale;
     
-    public GameObject[] itemPrefabs;
     public Vector2 offset;
     public float moveTime;
     public float flushTime;
     
+    [Header("Game prefabs")]
+    public BaseComponent[] prefabs;
+    
     [Header("Balloon")]
-    public GameObject[] balloonPrefabs;
     public Vector2 amplitudeRange;
     public Vector2 periodRange;
     public Vector2 speedRange;
@@ -30,7 +29,7 @@ public class Configuration : ScriptableObjectInstaller<Configuration>
 
     public override void InstallBindings()
     {
-        Container.BindInstance(itemPrefabs);
+        Container.BindInstance(prefabs);
         Container.BindInstance(this);
     }
     
@@ -40,8 +39,4 @@ public class Configuration : ScriptableObjectInstaller<Configuration>
         return (index - 1) % levels.Length + 1;
     }
 
-    public float GetTargetRatio()
-    {
-        return targetResolution.x / targetResolution.y;
-    }
 }
