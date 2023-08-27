@@ -30,9 +30,11 @@ public class BaseComponent : MonoBehaviour, IPoolable
 
     public virtual void OnDespawned()
     {
+        gameObject.SetActive(false);
     }
 
     public virtual void OnSpawned()
     {
+        gameObject.SetActive(true);
     }
 }

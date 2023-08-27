@@ -39,14 +39,5 @@ public class Item : BaseComponent
     }
 
     private string flushAnimation => isWater ? Constants.WaterFlushAnimation : Constants.FireFlushAnimation;
-
-    public override void OnSpawned()
-    {
-        gameObject.SetActive(true);
-    }
-
-    public override void OnDespawned()
-    {
-        gameObject.SetActive(false);
-    }
+    
 }
