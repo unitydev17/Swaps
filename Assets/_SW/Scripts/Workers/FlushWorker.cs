@@ -21,25 +21,25 @@ public class FlushWorker : IWorker<Flushes>
     {
         for (var i = 0; i < _board.height; i++)
         {
-            var currModel = _board.GetItemModel(0, i);
+            var currType = _board.GetTileType(0, i);
             var beginIndex = _board.GetIndex(0, i);
             var endIndex = beginIndex;
 
             for (var j = 1; j < _board.width; j++)
             {
-                var nextModel = _board.GetItemModel(j, i);
+                var nextType = _board.GetTileType(j, i);
 
-                if (ItemModel.SameType(nextModel, currModel))
+                if (nextType == currType)
                 {
                     endIndex = _board.GetIndex(j, i);
 
-                    if (IsLastRowElement(j)) CheckAddRowFlushes(currModel, endIndex, beginIndex);
+                    if (IsLastRowElement(j)) CheckAddRowFlushes(currType, endIndex, beginIndex);
                 }
                 else
                 {
-                    CheckAddRowFlushes(currModel, endIndex, beginIndex);
+                    CheckAddRowFlushes(currType, endIndex, beginIndex);
 
-                    currModel = nextModel;
+                    currType = nextType;
                     beginIndex = _board.GetIndex(j, i);
                     endIndex = beginIndex;
                 }
@@ -58,9 +58,9 @@ public class FlushWorker : IWorker<Flushes>
             return (j + 1) % _board.width == 0;
         }
 
-        void CheckAddRowFlushes(ItemModel currModel, int endIndex, int beginIndex)
+        void CheckAddRowFlushes(TileType currModel, int endIndex, int beginIndex)
         {
-            if (ItemModel.IsNotEmpty(currModel))
+            if (currModel != TileType.Empty)
             {
                 AddRowFlushes(endIndex, beginIndex);
             }
@@ -71,24 +71,24 @@ public class FlushWorker : IWorker<Flushes>
     {
         for (var i = 0; i < _board.width; i++)
         {
-            var currModel = _board.GetItemModel(i, 0);
+            var currType = _board.GetTileType(i, 0);
             var beginIndex = _board.GetIndex(i, 0);
             var endIndex = beginIndex;
 
             for (var j = 1; j < _board.height; j++)
             {
-                var nextModel = _board.GetItemModel(i, j);
+                var nextType = _board.GetTileType(i, j);
 
-                if (ItemModel.SameType(nextModel, currModel))
+                if (nextType == currType)
                 {
                     endIndex = _board.GetIndex(i, j);
-                    if (IsLastColumnElement(j)) CheckAddColumnFlushes(currModel, endIndex, beginIndex);
+                    if (IsLastColumnElement(j)) CheckAddColumnFlushes(currType, endIndex, beginIndex);
                 }
                 else
                 {
-                    CheckAddColumnFlushes(currModel, endIndex, beginIndex);
+                    CheckAddColumnFlushes(currType, endIndex, beginIndex);
 
-                    currModel = nextModel;
+                    currType = nextType;
                     beginIndex = _board.GetIndex(i, j);
                     endIndex = beginIndex;
                 }
@@ -107,9 +107,9 @@ public class FlushWorker : IWorker<Flushes>
             return (j + 1) % _board.height == 0;
         }
 
-        void CheckAddColumnFlushes(ItemModel currModel, int endIndex, int beginIndex)
+        void CheckAddColumnFlushes(TileType currType, int endIndex, int beginIndex)
         {
-            if (ItemModel.IsNotEmpty(currModel))
+            if (currType != TileType.Empty)
             {
                 AddColumnFlushes(endIndex, beginIndex);
             }

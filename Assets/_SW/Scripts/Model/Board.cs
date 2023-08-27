@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -12,16 +10,16 @@ public class Board
 
     public Board(Board board)
     {
-        items = new List<ItemModel>(board.items);
+        items = new List<TileType>(board.items);
         width = board.width;
     }
 
     public int width;
-    public List<ItemModel> items;
+    public List<TileType> items;
 
     public int height => items.Count / width;
 
-    public ItemModel GetItemModel(int x, int y)
+    public TileType GetTileType(int x, int y)
     {
         var index = GetIndex(x, y);
         return items[index];
@@ -44,9 +42,9 @@ public class Board
         return new Vector2Int(x, y);
     }
 
-    public ItemModel GetItemModel(Vector2Int itemPosition)
+    public TileType GetType(Vector2Int itemPosition)
     {
-        return GetItemModel(itemPosition.x, itemPosition.y);
+        return GetTileType(itemPosition.x, itemPosition.y);
     }
 
     public void Move(int currentIndex, int nextIndex)
@@ -75,24 +73,27 @@ public class Board
     {
         foreach (var index in flushes)
         {
-            items[index] = new EmptyModel();
+            items[index] = TileType.Empty;
         }
     }
 
     public bool IsEmpty()
     {
-        return !items.Any(ItemModel.IsNotEmpty);
+        return items.All(item => item is TileType.Empty);
     }
 
     public bool IsImpossibleToComplete()
     {
-        var dict = new Dictionary<Type, int>();
-        foreach (var type in items.Select(item => item.GetType()))
+        var dict = new Dictionary<TileType, int>();
+
+        items.ForEach(item =>
         {
-            if (type == typeof(EmptyModel)) continue;
-            dict.TryGetValue(type, out var counter);
-            dict[type] = counter + 1;
-        }
+            if (item != TileType.Empty)
+            {
+                dict.TryGetValue(item, out var counter);
+                dict[item] = counter + 1;
+            }
+        });
 
         return dict.Values.Any(value => value <= 2);
     }

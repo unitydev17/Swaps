@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using Zenject;
@@ -70,7 +71,7 @@ public class BoardController : IInitializable, IDisposable
         ResetRootScale();
         AlignPivot();
 
-        var items = CreateItemsFromModel();
+        var items = CreateItemsFromTiles().ToList();
         _boardViewModel = _boardViewModelFactory.Create();
         _boardViewModel.Init(items, _board);
 
@@ -96,36 +97,21 @@ public class BoardController : IInitializable, IDisposable
         _pivot.parent.localScale = Vector3.one * scale;
     }
 
-    private List<Item> CreateItemsFromModel()
+    private IEnumerable<Item> CreateItemsFromTiles()
     {
-        var items = new List<Item>();
-
         for (var i = 0; i < _board.items.Count; i++)
         {
-            var itemModel = _board.items[i];
-            if (itemModel is EmptyModel) continue;
+            var tileType = _board.items[i];
+            if (tileType == TileType.Empty) continue;
 
-            var item = CreateItem(itemModel, i);
-            items.Add(item);
+            var item = CreateItem(tileType, i);
+            yield return item;
         }
-
-        return items;
     }
 
-    private Item CreateItem(ItemModel itemModel, int i)
+    private Item CreateItem(TileType type, int i)
     {
-        Item item;
-
-        if (itemModel is FireModel)
-        {
-            item = (Item) _commonPool.Spawn(BaseComponent.Type.Fire);
-        }
-        else
-        {
-            item = (Item) _commonPool.Spawn(BaseComponent.Type.Water);
-        }
-
-
+        var item = (Item) _commonPool.Spawn(TileToBaseComponentTypeMapper.Map(type));
         item.transform.parent = _pivot;
         item.index = i;
 
@@ -175,7 +161,7 @@ public class BoardController : IInitializable, IDisposable
 
     private bool CheckEmpty(Vector2Int nextPos)
     {
-        return _board.GetItemModel(nextPos) is EmptyModel;
+        return _board.GetType(nextPos) == TileType.Empty;
     }
 
 

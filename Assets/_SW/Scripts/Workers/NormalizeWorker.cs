@@ -24,7 +24,7 @@ public class NormalizeWorker : IWorker<Moves>
                 for (var i = _normBoard.width; i < _normBoard.items.Count; i++)
                 {
                     var currPos = _normBoard.GetPos(i);
-                    if (_normBoard.GetItemModel(currPos) is EmptyModel) continue;
+                    if (_normBoard.GetType(currPos) == TileType.Empty) continue;
 
                     var nextPos = currPos;
                     var targetPos = currPos;
@@ -33,9 +33,9 @@ public class NormalizeWorker : IWorker<Moves>
                     for (var y = currPos.y - 1; y >= 0; y--)
                     {
                         nextPos.y = y;
-                        var nextItem = _normBoard.GetItemModel(nextPos);
+                        var nextItem = _normBoard.GetType(nextPos);
 
-                        if (nextItem is EmptyModel)
+                        if (nextItem == TileType.Empty)
                         {
                             hasEmpties = true;
                             targetPos = nextPos;
