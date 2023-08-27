@@ -24,7 +24,7 @@ public class Item : BaseComponent
         SetSortingOrder(_index);
     }
 
-    private bool isWater => type == Type.WaterItem;
+    private bool isWater => type == Type.Water;
 
     private void OnEnable()
     {

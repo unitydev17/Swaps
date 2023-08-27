@@ -5,8 +5,8 @@ public class BaseComponent : MonoBehaviour, IPoolable
 {
     public enum Type
     {
-        WaterItem,
-        FireItem,
+        Water,
+        Fire,
         BlueBalloon,
         OrangeBalloon
     }

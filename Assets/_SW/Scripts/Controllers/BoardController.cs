@@ -118,11 +118,11 @@ public class BoardController : IInitializable, IDisposable
 
         if (itemModel is FireModel)
         {
-            item = (Item) _commonPool.Spawn(BaseComponent.Type.FireItem);
+            item = (Item) _commonPool.Spawn(BaseComponent.Type.Fire);
         }
         else
         {
-            item = (Item) _commonPool.Spawn(BaseComponent.Type.WaterItem);
+            item = (Item) _commonPool.Spawn(BaseComponent.Type.Water);
         }
 
 
