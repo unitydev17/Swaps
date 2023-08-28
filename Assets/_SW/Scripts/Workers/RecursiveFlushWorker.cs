@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 public class RecursiveFlushWorker : IFlushWorker
 {
     private const int MinFlushCount = 3;
@@ -18,7 +20,6 @@ public class RecursiveFlushWorker : IFlushWorker
         return flushes;
     }
 
-    private int _counter;
 
     private void ProcessElements(Flushes flushes)
     {
@@ -26,23 +27,28 @@ public class RecursiveFlushWorker : IFlushWorker
         {
             if (_board.items[index] == TileType.Empty) continue;
 
-            _counter = 1;
-            FindMatches(index, false);
-            AddMatched(flushes, index, false);
+            var counter = 1;
+            FindMatches(index, ref counter);
+            flushes.UnionWith(GetMatched(index, counter, false));
 
-            _counter = 1;
-            FindMatches(index, true);
-            AddMatched(flushes, index, true);
+
+            counter = 1;
+            FindMatches(index, ref counter, true);
+            flushes.UnionWith(GetMatched(index, counter, true));
         }
     }
 
-    private void AddMatched(Flushes flushes, int index, bool isColumns)
+    private IEnumerable<int> GetMatched(int index, int counter, bool isVerticalSearch)
     {
-        if (_counter < MinFlushCount) return;
-        for (var i = 0; i < _counter; i++) flushes.Add(index + i * (isColumns ? _board.width : 1));
+        if (counter < MinFlushCount) yield break;
+
+        for (var i = 0; i < counter; i++)
+        {
+            yield return index + i * (isVerticalSearch ? _board.width : 1);
+        }
     }
 
-    private void FindMatches(int index, bool isVerticalSearch)
+    private void FindMatches(int index, ref int counter, bool isVerticalSearch = false)
     {
         if (IsOutBounds(index, isVerticalSearch)) return;
 
@@ -50,8 +56,8 @@ public class RecursiveFlushWorker : IFlushWorker
         var matched = _board.items[nextIndex] == _board.items[index];
         if (!matched) return;
 
-        _counter++;
-        FindMatches(nextIndex, isVerticalSearch);
+        counter++;
+        FindMatches(nextIndex, ref counter, isVerticalSearch);
     }
 
     private bool IsOutBounds(int index, bool isVerticalSearch)
