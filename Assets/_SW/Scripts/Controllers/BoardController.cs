@@ -61,9 +61,10 @@ public class BoardController : IInitializable, IDisposable
         _camera = camera;
     }
 
-    public void Activate()
+    public async void Activate()
     {
         CreateBoard();
+        await ValidateAndProcessBoard();
     }
 
     private void CreateBoard()
@@ -164,13 +165,12 @@ public class BoardController : IInitializable, IDisposable
         return _board.GetType(nextPos) == TileType.Empty;
     }
 
-
     private bool CheckBounds(Vector2 pos)
     {
         return pos.x >= 0 && pos.x < _board.width && pos.y >= 0 && pos.y < _board.height;
     }
 
-    public async Task ValidateAndProcessBoard()
+    private async Task ValidateAndProcessBoard()
     {
         try
         {
@@ -181,7 +181,7 @@ public class BoardController : IInitializable, IDisposable
             {
                 moves = FetchNormalized();
                 await ProcessNormalized(moves);
-
+                
                 flushes = FetchFlush();
                 await ProcessFlushes(flushes);
             } while (moves.Count > 0 || flushes.Count > 0);

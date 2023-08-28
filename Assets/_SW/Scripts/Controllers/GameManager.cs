@@ -61,7 +61,6 @@ public class GameManager : MonoBehaviour
         _userData = _userDataStorage.Load();
         NextLevel();
 
-
         _balloonManager.Setup(Camera.main);
         _balloonManager.Activate();
 
@@ -94,6 +93,7 @@ public class GameManager : MonoBehaviour
         var levelIndex = _cfg.GetLevelIndex(_userData.currentLevel);
         _level = _levelStorage.Load(levelIndex);
         var board = LevelToBoardMapper.Map(_level);
+        board.minFlushCount = _cfg.MinFlushCount;
 
         _boardController.SetBoard(board, _pivot, Camera.main);
         _boardController.Activate();

@@ -5,6 +5,6 @@ public static class Constants
     public const string FireIdleAnimation = "FireIdle";
     public const string FireFlushAnimation = "FireFlush";
     
-    public const string Exception_TypeNotMatch = "Can not match TileType and BaseComponent.Type";
-    
+    public const string ExceptionTypeNotMatch = "Can not match TileType \"{0}\" and BaseComponent.Type";
+
 }

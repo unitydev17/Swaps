@@ -39,5 +39,4 @@ public class Item : BaseComponent
     }
 
     private string flushAnimation => isWater ? Constants.WaterFlushAnimation : Constants.FireFlushAnimation;
-    
 }

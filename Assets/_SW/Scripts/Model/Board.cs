@@ -14,6 +14,7 @@ public class Board
         width = board.width;
     }
 
+    public int minFlushCount;
     public int width;
     public List<TileType> items;
 
@@ -49,19 +50,19 @@ public class Board
 
     public void Move(int currentIndex, int nextIndex)
     {
-        SwapModelItems(currentIndex, nextIndex);
+        SwapItems(currentIndex, nextIndex);
     }
 
-    private void SwapModelItems(int currentIndex, int nextIndex)
+    private void SwapItems(int currentIndex, int nextIndex)
     {
-        var currItemModel = items[currentIndex];
+        var currItem = items[currentIndex];
         items[currentIndex] = items[nextIndex];
-        items[nextIndex] = currItemModel;
+        items[nextIndex] = currItem;
     }
 
     public void Swap(int currentIndex, int nextIndex)
     {
-        SwapModelItems(currentIndex, nextIndex);
+        SwapItems(currentIndex, nextIndex);
     }
 
     public void MoveBatch(List<(int, int)> moves)
@@ -86,15 +87,14 @@ public class Board
     {
         var dict = new Dictionary<TileType, int>();
 
-        items.ForEach(item =>
+        foreach (var item in items.Where(item => item != TileType.Empty))
         {
-            if (item != TileType.Empty)
-            {
-                dict.TryGetValue(item, out var counter);
-                dict[item] = counter + 1;
-            }
-        });
+            dict.TryGetValue(item, out var counter);
+            dict[item] = counter + 1;
+        }
 
-        return dict.Values.Any(value => value <= 2);
+
+        return dict.Values.Any(value => value <= minFlushCount - 1);
     }
+   
 }

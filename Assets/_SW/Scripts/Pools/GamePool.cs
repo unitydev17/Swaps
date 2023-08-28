@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 using Zenject;
 
 public class GamePool
@@ -8,11 +9,13 @@ public class GamePool
     private readonly Dictionary<BaseComponent.Type, IMemoryPool<BaseComponent>> _pools;
     private readonly DiContainer _container;
     private Configuration _cfg;
+    private Transform _rootTr;
 
     [Inject]
     public void Construct(Configuration cfg)
     {
         _cfg = cfg;
+        _rootTr = new GameObject(typeof(GamePool).ToString()).transform;
     }
 
     public GamePool(DiContainer container)
@@ -24,7 +27,9 @@ public class GamePool
     public BaseComponent Spawn(BaseComponent.Type type)
     {
         if (_pools.TryGetValue(type, out var pool))
-            return pool.Spawn();
+        {
+            return Spawned();
+        }
 
         pool = _container.Instantiate<CustomMemoryPool>(new object[]
         {
@@ -32,19 +37,27 @@ public class GamePool
         });
 
         _pools.Add(type, pool);
-        return pool.Spawn();
+        return Spawned();
+
+        BaseComponent Spawned()
+        {
+            var obj = pool.Spawn();
+            var transform = obj.transform;
+            transform.SetParent(_rootTr);
+            transform.localScale = Vector3.one;
+            return obj;
+        }
     }
 
 
     private BaseComponent GetPrefab(BaseComponent.Type type)
     {
-        var result = _cfg.prefabs.First(prefab => prefab.type == type);
-        if (result == null) throw new Exception("Prefab type not found among the prefabs");
-        return result;
+        return _cfg.prefabs.First(prefab => prefab.type == type);
     }
 
     public void Despawn(BaseComponent obj)
     {
+        obj.transform.parent = _rootTr;
         _pools[obj.type].Despawn(obj);
     }
 }

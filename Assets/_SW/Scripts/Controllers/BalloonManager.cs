@@ -57,7 +57,6 @@ public class BalloonManager : MonoBehaviour
         return Random.value > 0.5f ? BaseComponent.Type.BlueBalloon : BaseComponent.Type.OrangeBalloon;
     }
 
-
     private BalloonModel GenerateModel(BaseComponent item)
     {
         var model = new BalloonModel
@@ -70,11 +69,11 @@ public class BalloonManager : MonoBehaviour
             scale = _cfg.scaleRange.Random(),
             time = 0
         };
-        model.widthRange = GetModelWidthRange(item, model.scale);
+        model.widthRange = GetWidthRange(item, model.scale);
         return model;
     }
 
-    private Vector2 GetModelWidthRange(BaseComponent item, float modelScale)
+    private Vector2 GetWidthRange(BaseComponent item, float modelScale)
     {
         var sprite = item.sprite;
         var spriteExtentInUnits = sprite.texture.width / sprite.pixelsPerUnit * 0.5f;

@@ -8,7 +8,7 @@ public class UiController : MonoBehaviour
 {
     public static event Action OnRetry;
     public static event Action OnForceNextLevel;
-    
+
     [SerializeField] private Image _fadeImg;
     [SerializeField] private BounceButton _retryBtn;
 
@@ -37,11 +37,11 @@ public class UiController : MonoBehaviour
         OnForceNextLevel?.Invoke();
         FadeUnfade();
     }
-    
+
     public void ForceRetryLevel()
     {
         if (_model.inputDenied) return;
-        
+
         OnRetry?.Invoke();
         FadeUnfade();
     }
@@ -56,9 +56,9 @@ public class UiController : MonoBehaviour
     {
         _retryBtn.gameObject.SetActive(true);
     }
+
     public void DisappearRetryButton()
     {
         _retryBtn.Disappear();
     }
-
 }

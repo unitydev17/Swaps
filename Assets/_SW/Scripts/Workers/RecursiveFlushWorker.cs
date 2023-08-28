@@ -2,8 +2,6 @@ using System.Collections.Generic;
 
 public class RecursiveFlushWorker : IFlushWorker
 {
-    private const int MinFlushCount = 3;
-
     private Board _board;
 
     public void Setup(Board board)
@@ -23,7 +21,7 @@ public class RecursiveFlushWorker : IFlushWorker
 
     private void ProcessElements(Flushes flushes)
     {
-        for (var index = 0; index <= _board.items.Count - MinFlushCount; index++)
+        for (var index = 0; index <= _board.items.Count - _board.minFlushCount; index++)
         {
             if (_board.items[index] == TileType.Empty) continue;
 
@@ -40,7 +38,7 @@ public class RecursiveFlushWorker : IFlushWorker
 
     private IEnumerable<int> GetMatched(int index, int counter, bool isVerticalSearch)
     {
-        if (counter < MinFlushCount) yield break;
+        if (counter < _board.minFlushCount) yield break;
 
         for (var i = 0; i < counter; i++)
         {
@@ -50,9 +48,10 @@ public class RecursiveFlushWorker : IFlushWorker
 
     private void FindMatches(int index, ref int counter, bool isVerticalSearch = false)
     {
-        if (IsOutBounds(index, isVerticalSearch)) return;
-
         var nextIndex = index + (isVerticalSearch ? _board.width : 1);
+        if (IsOutBounds(nextIndex, isVerticalSearch)) return;
+
+
         var matched = _board.items[nextIndex] == _board.items[index];
         if (!matched) return;
 
@@ -62,7 +61,7 @@ public class RecursiveFlushWorker : IFlushWorker
 
     private bool IsOutBounds(int index, bool isVerticalSearch)
     {
-        if (isVerticalSearch) return index > _board.items.Count - _board.width - 1;
+        if (isVerticalSearch) return index > _board.items.Count - 1;
 
         return index > 0 && index % _board.width == 0;
     }

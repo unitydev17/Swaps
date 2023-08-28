@@ -1,3 +1,6 @@
+using System;
+
+[Obsolete]
 public class FlushWorker : IFlushWorker
 {
     private Board _board;
@@ -49,7 +52,7 @@ public class FlushWorker : IFlushWorker
         void AddRowFlushes(int endIndex, int beginIndex)
         {
             var size = endIndex - beginIndex;
-            if (size < 2) return;
+            if (size < _board.minFlushCount - 1) return;
             for (var k = beginIndex; k <= endIndex; k++) flushes.Add(k);
         }
 
@@ -98,7 +101,7 @@ public class FlushWorker : IFlushWorker
         void AddColumnFlushes(int endIndex, int beginIndex)
         {
             var size = (endIndex - beginIndex) / _board.width;
-            if (size < 2) return;
+            if (size < _board.minFlushCount - 1) return;
             for (var k = beginIndex; k <= endIndex; k += _board.width) flushes.Add(k);
         }
 
