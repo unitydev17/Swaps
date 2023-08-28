@@ -1,4 +1,4 @@
-public class FlushWorker : IWorker<Flushes>
+public class FlushWorker : IFlushWorker
 {
     private Board _board;
 

@@ -8,7 +8,7 @@ public class GameInstaller : MonoInstaller
     {
         Container.Bind<AppModel>().ToSelf().AsSingle();
         Container.Bind<NormalizeWorker>().ToSelf().AsSingle();
-        Container.Bind<FlushWorker>().ToSelf().AsSingle();
+        Container.Bind<IFlushWorker>().To<RecursiveFlushWorker>().AsSingle();
         Container.Bind<GameManager>().FromComponentInHierarchy().AsSingle();
         Container.Bind<UiController>().FromComponentInHierarchy().AsSingle();
         Container.BindInterfacesAndSelfTo<BoardController>().AsSingle();

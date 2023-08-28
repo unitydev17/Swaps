@@ -18,7 +18,7 @@ public class BoardController : IInitializable, IDisposable
     private Configuration _cfg;
     private BoardViewModel.Factory _boardViewModelFactory;
     private NormalizeWorker _normalizeWorker;
-    private FlushWorker _flushWorker;
+    private IFlushWorker _flushWorker;
     private AppModel _appModel;
     private Camera _camera;
 
@@ -31,7 +31,7 @@ public class BoardController : IInitializable, IDisposable
         Configuration cfg,
         BoardViewModel.Factory boardViewModelFactory,
         NormalizeWorker normalizeWorker,
-        FlushWorker flushWorker,
+        IFlushWorker flushWorker,
         GamePool commonPool)
     {
         _appModel = appModel;
