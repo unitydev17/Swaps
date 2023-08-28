@@ -21,7 +21,7 @@ public class Item : BaseComponent
     {
         base.Awake();
         _animator = GetComponent<Animator>();
-        SetSortingOrder(_index);
+        
     }
 
     private bool isWater => type == Type.Water;
@@ -29,6 +29,7 @@ public class Item : BaseComponent
     private void OnEnable()
     {
         _animator.Play(idleAnimation, 0, Random.Range(0, 1f));
+        SetSortingOrder(_index);
     }
 
     private string idleAnimation => isWater ? Constants.WaterIdleAnimation : Constants.FireIdleAnimation;

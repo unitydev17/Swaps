@@ -26,8 +26,9 @@ public class BoardViewModel
         _board = board;
     }
 
-    public void AnimateFlush(Flushes flushes)
+    public void AnimateFlush(Flushes flushes, Action callback)
     {
+        var counter = flushes.Count;
         foreach (var item in _items.Where(item => flushes.Contains(item.index)))
         {
             item.Flush();
@@ -35,6 +36,7 @@ public class BoardViewModel
             {
                 _items.Remove(item);
                 _gamePool.Despawn(item);
+                if (--counter == 0) callback?.Invoke();
             }, false);
         }
     }
@@ -65,15 +67,20 @@ public class BoardViewModel
         });
     }
 
-    public void AnimateMoveBatch(Moves moves)
+    public void AnimateMoveBatch(Moves moves, Action callback)
     {
+        var count = moves.Count;
         moves.ForEach(move =>
         {
             var (currIndex, nextIndex) = move;
             var item = GetItem(currIndex);
             var newPos = _board.GetPos(nextIndex);
 
-            AnimateMove(item, newPos, () => { item.index = nextIndex; });
+            AnimateMove(item, newPos, () =>
+            {
+                item.index = nextIndex;
+                if (--count == 0) callback?.Invoke();
+            });
         });
     }
 
@@ -88,7 +95,7 @@ public class BoardViewModel
         var newPos = new Vector3(position.x * _cfg.offset.x, position.y * _cfg.offset.y, 0);
         item.DOKill(true);
         item.transform.DOLocalMove(newPos, _cfg.moveTime);
-        DOVirtual.DelayedCall(_cfg.moveTime * 0.75f, () => { callback?.Invoke(); }, ignoreTimeScale: false);
+        DOVirtual.DelayedCall(_cfg.moveTime * 0.75f, () => { callback?.Invoke(); }, false);
     }
 
 

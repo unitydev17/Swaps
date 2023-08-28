@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using EasyButtons;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -33,7 +34,8 @@ public class LevelEditor : MonoBehaviour
     }
 
     [Button]
-    private void SaveLevel()
+    [UsedImplicitly]
+    public void SaveLevel()
     {
         _tileMap.CompressBounds();
 
@@ -55,7 +57,7 @@ public class LevelEditor : MonoBehaviour
             yield return new SavedTile
             {
                 position = pos,
-                tile = levelTile,
+                tile = levelTile
             };
         }
     }

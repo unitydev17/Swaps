@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using UnityEngine;
 using Zenject;
 
@@ -61,10 +60,10 @@ public class BoardController : IInitializable, IDisposable
         _camera = camera;
     }
 
-    public async void Activate()
+    public void Activate()
     {
         CreateBoard();
-        await ValidateAndProcessBoard();
+        ValidateAndProcessBoard();
     }
 
     private void CreateBoard()
@@ -147,12 +146,12 @@ public class BoardController : IInitializable, IDisposable
             }
 
             _board.Move(currIndex, nextIndex);
-            _boardViewModel.AnimateMove(currIndex, nextIndex, _board.GetPos(nextIndex), async () => await ValidateAndProcessBoard());
+            _boardViewModel.AnimateMove(currIndex, nextIndex, _board.GetPos(nextIndex), ValidateAndProcessBoard);
             return;
         }
 
         _board.Swap(currIndex, nextIndex);
-        _boardViewModel.AnimateSwap(currIndex, nextIndex, _board.GetPos(currIndex), _board.GetPos(nextIndex), async () => await ValidateAndProcessBoard());
+        _boardViewModel.AnimateSwap(currIndex, nextIndex, _board.GetPos(currIndex), _board.GetPos(nextIndex), ValidateAndProcessBoard);
     }
 
     private static bool IsMoveUp(Vector2Int direction)
@@ -170,48 +169,58 @@ public class BoardController : IInitializable, IDisposable
         return pos.x >= 0 && pos.x < _board.width && pos.y >= 0 && pos.y < _board.height;
     }
 
-    private async Task ValidateAndProcessBoard()
+    private void ValidateAndProcessBoard()
     {
-        try
+        _appModel.inputDenied = true;
+        Flushes flushes;
+
+        var moves = FetchNormalized();
+        ProcessNormalized(moves, () =>
         {
-            Moves moves;
-            Flushes flushes;
-
-            do
+            flushes = FetchFlush();
+            ProcessFlushes(flushes, () =>
             {
-                moves = FetchNormalized();
-                await ProcessNormalized(moves);
-                
-                flushes = FetchFlush();
-                await ProcessFlushes(flushes);
-            } while (moves.Count > 0 || flushes.Count > 0);
+                if (moves.Count > 0 || flushes.Count > 0)
+                {
+                    ValidateAndProcessBoard();
+                }
+                else
+                {
+                    FinishActions();
+                }
+            });
+        });
 
+        void FinishActions()
+        {
             if (_board.IsEmpty()) OnLevelCompleted?.Invoke();
             else if (_board.IsImpossibleToComplete()) OnImpossibleToComplete?.Invoke();
+            _appModel.inputDenied = false;
         }
-        catch (Exception e)
+    }
+
+    private void ProcessFlushes(Flushes flushes, Action callback)
+    {
+        if (flushes.Count == 0)
         {
-            Debug.Log(e.Message);
+            callback?.Invoke();
+            return;
         }
 
-        _appModel.inputDenied = false;
-    }
-
-    private async Task ProcessFlushes(Flushes flushes)
-    {
-        if (flushes.Count == 0) return;
         _board.Flush(flushes);
-        _boardViewModel.AnimateFlush(flushes);
-        await Task.Delay(_cfg.flushTime.SecondsToMilliseconds());
+        _boardViewModel.AnimateFlush(flushes, callback);
     }
 
-    private async Task ProcessNormalized(Moves moves)
+    private void ProcessNormalized(Moves moves, Action callback)
     {
-        if (moves.Count == 0) return;
-        _board.MoveBatch(moves);
-        _boardViewModel.AnimateMoveBatch(moves);
+        if (moves.Count == 0)
+        {
+            callback?.Invoke();
+            return;
+        }
 
-        await Task.Delay(_cfg.moveTime.SecondsToMilliseconds());
+        _board.MoveBatch(moves);
+        _boardViewModel.AnimateMoveBatch(moves, callback);
     }
 
     private Moves FetchNormalized()

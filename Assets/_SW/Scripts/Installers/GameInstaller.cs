@@ -2,8 +2,6 @@ using Zenject;
 
 public class GameInstaller : MonoInstaller
 {
-    [Inject] private Configuration _cfg;
-
     public override void InstallBindings()
     {
         Container.Bind<AppModel>().ToSelf().AsSingle();
@@ -13,7 +11,7 @@ public class GameInstaller : MonoInstaller
         Container.Bind<UiController>().FromComponentInHierarchy().AsSingle();
         Container.BindInterfacesAndSelfTo<BoardController>().AsSingle();
         Container.Bind<BalloonManager>().FromComponentInHierarchy().AsSingle();
-        
+
         BindRepositories();
         BindPools();
         BindFactories();

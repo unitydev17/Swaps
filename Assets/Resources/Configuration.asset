@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 253374b84d2614552876ed2602e696eb, type: 3}
   m_Name: Configuration
   m_EditorClassIdentifier: 
-  forceRunLevel: 5
+  forceRunLevel: 0
   levels:
   - {fileID: 11400000, guid: c4f9c2d5f679d4b6e98736c4a0ce4a3a, type: 2}
   - {fileID: 11400000, guid: 084677e25c05d40c688b9d7686b7ff37, type: 2}

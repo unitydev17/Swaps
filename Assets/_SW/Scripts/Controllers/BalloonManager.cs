@@ -4,6 +4,8 @@ using Zenject;
 
 public class BalloonManager : MonoBehaviour
 {
+    private const int SortingCollisionAvoidanceKoeff = 10;
+
     private int _counter;
     private Camera _camera;
 
@@ -48,7 +50,7 @@ public class BalloonManager : MonoBehaviour
 
         int GetSort(Balloon item)
         {
-            return (int) ((_cfg.scaleRange.y - item.model.scale) * -_cfg.maxBalloons);
+            return (int) ((_cfg.scaleRange.y - item.model.scale) * (-_cfg.maxBalloons * SortingCollisionAvoidanceKoeff) + Balloon.counter);
         }
     }
 

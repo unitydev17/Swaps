@@ -22,7 +22,6 @@ public class BaseComponent : MonoBehaviour, IPoolable
 
     public void SetSortingOrder(int value)
     {
-        if (spriteRenderer == null) return;
         spriteRenderer.sortingOrder = value;
     }
 
