@@ -3,14 +3,17 @@ using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
+using UniRx;
 
-public class UiController : MonoBehaviour
+public class UiController : MonoBehaviour, IInitializable
 {
     public static event Action OnRetry;
     public static event Action OnForceNextLevel;
 
+
+    [SerializeField] private Button _nextBtn;
     [SerializeField] private Image _fadeImg;
-    [SerializeField] private BounceButton _retryBtn;
+    [SerializeField] private Button _retryBtn;
 
     private AppModel _model;
 
@@ -19,9 +22,17 @@ public class UiController : MonoBehaviour
     {
         _model = model;
     }
+    
+    
+    public void Initialize()
+    {
+        _nextBtn.onClick.AsObservable().Subscribe(_ => ForceNextLevel()).AddTo(this);
+        _retryBtn.onClick.AsObservable().Subscribe(_ => ForceRetryLevel()).AddTo(this);
+    }
 
     private void OnEnable()
     {
+        
         BoardController.OnImpossibleToComplete += AppearRetryButton;
     }
 
@@ -59,6 +70,7 @@ public class UiController : MonoBehaviour
 
     public void DisappearRetryButton()
     {
-        _retryBtn.Disappear();
+        _retryBtn.GetComponent<BounceButton>().Disappear();
     }
+
 }

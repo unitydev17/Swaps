@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311932, g: 0.38073996, b: 0.3587271, a: 1}
+  m_IndirectSpecularColor: {r: 0.37100038, g: 0.37851635, b: 0.3573835, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -389,19 +389,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 77423141}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1285427578}
-        m_TargetAssemblyTypeName: UiController, Assembly-CSharp
-        m_MethodName: ForceNextLevel
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &77423141
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1119,8 +1107,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fea345251d5da45299f299e5d3ab1f76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _nextBtn: {fileID: 77423140}
   _fadeImg: {fileID: 31133327}
-  _retryBtn: {fileID: 1590829674}
+  _retryBtn: {fileID: 1590829675}
 --- !u!1 &1563973772
 GameObject:
   m_ObjectHideFlags: 0
@@ -1250,19 +1239,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1590829677}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1285427578}
-        m_TargetAssemblyTypeName: UiController, Assembly-CSharp
-        m_MethodName: ForceRetryLevel
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1590829676
 MonoBehaviour:
   m_ObjectHideFlags: 0
