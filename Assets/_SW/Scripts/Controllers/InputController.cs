@@ -1,4 +1,5 @@
 using System;
+using UniRx;
 using UnityEngine;
 
 public class InputController : MonoBehaviour
@@ -15,18 +16,14 @@ public class InputController : MonoBehaviour
     private void Start()
     {
         _camera = Camera.main;
-    }
 
-    private void Update()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            CheckPress(Input.mousePosition);
-        }
-        else if (Input.GetMouseButtonUp(0))
-        {
-            CheckRelease(Input.mousePosition);
-        }
+        Observable.EveryUpdate()
+            .Where(_ => Input.GetMouseButtonDown(0))
+            .Subscribe(x => CheckPress(Input.mousePosition));
+
+        Observable.EveryUpdate()
+            .Where(_ => Input.GetMouseButtonUp(0))
+            .Subscribe(x => CheckRelease(Input.mousePosition));
     }
 
     private void CheckPress(Vector3 mousePosition)
